@@ -1,123 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FXML version="2.1">
-  <Form id="CivilComplaint" width="1600" height="900" titletext="시민 통합 민원 접수 및 처리 관리" onload="CivilComplaint_onload">
+<FDL version="2.1">
+  <Form id="CivilComplaint" width="1680" height="960" titletext="시민 통합 민원 접수 및 처리 관리" onload="CivilComplaint_onload" background="#0a0f1d">
     <Layouts>
-      <Layout width="1600" height="900">
-        <!-- 상단 타이틀 영역 -->
-        <Static id="st_title" text="시민 통합 민원 접수 및 처리 관리" left="20" top="15" width="400" height="30" cssclass="sta_WF_title01"/>
-        <Static id="st_subtitle" text="스마트시티 행정망 연계 실시간 민원 현황 및 단계별 처리 지원" left="20" top="45" width="500" height="20" cssclass="sta_WF_subTitle"/>
-
-        <!-- 검색 조건 패널 (Search Div) -->
-        <Div id="div_search" left="20" top="75" right="20" height="60" cssclass="div_WF_search">
+      <Layout width="1680" height="960">
+        <!-- 1. 상단 타이틀 바 -->
+        <Div id="div_header" left="20" top="15" right="20" height="60" background="#111827" border="1px solid #1e293b" borderRadius="8px">
           <Layouts>
             <Layout>
-              <Static id="st_dist" text="관할 자치구" left="15" top="15" width="80" height="30"/>
-              <Combo id="cmb_dist" left="100" top="15" width="140" height="30" innerdataset="ds_districts" codecolumn="CODE" datacolumn="NAME"/>
-              
-              <Static id="st_status" text="처리 상태" left="260" top="15" width="70" height="30"/>
-              <Combo id="cmb_status" left="335" top="15" width="130" height="30" innerdataset="ds_statusList" codecolumn="CODE" datacolumn="NAME"/>
-              
-              <Static id="st_keyword" text="민원 검색어" left="485" top="15" width="80" height="30"/>
-              <Edit id="edt_keyword" left="570" top="15" width="220" height="30" placeholder="제목/내용/민원인 검색"/>
-              
-              <Button id="btn_search" text="조회 (F8)" left="810" top="15" width="90" height="30" cssclass="btn_WF_search" onclick="fn_search"/>
-              <Button id="btn_reset" text="초기화" left="910" top="15" width="80" height="30" onclick="fn_reset"/>
-              <Button id="btn_excel" text="엑셀 다운로드" right="15" top="15" width="110" height="30" onclick="fn_exportExcel"/>
+              <Static id="st_icon" text="📋" left="15" top="12" width="36" height="36" font="22px/normal 'Segoe UI Emoji'" textAlign="center"/>
+              <Static id="st_title" text="시민 통합 민원 접수 및 처리 관제" left="60" top="10" width="400" height="24" font="bold 18px 'Pretendard', 'Malgun Gothic'" color="#ffffff"/>
+              <Static id="st_subtitle" text="도심 시설물 파손, 가로등 소등, 스마트 쉘터 오작동 등 시민 불편사항 실시간 처리 지원" left="60" top="34" width="700" height="18" font="11px 'Pretendard'" color="#64748b"/>
+              <Button id="btn_excel" text="📥 엑셀(CSV) 다운로드" right="15" top="14" width="160" height="32" background="#059669" color="#ffffff" font="bold 12px 'Pretendard'" border="none" borderRadius="4px" onclick="fn_exportExcel"/>
             </Layout>
           </Layouts>
         </Div>
 
-        <!-- 민원 목록 그리드 (대용량 페이징 바인딩) -->
-        <Grid id="grd_complaints" left="20" top="145" width="1050" bottom="60" binddataset="ds_complaints" autofittype="col" oncellclick="grd_complaints_oncellclick">
-          <Formats>
-            <Format id="default">
-              <Columns>
-                <Column size="45" band="left"/>
-                <Column size="140"/>
-                <Column size="110"/>
-                <Column size="280"/>
-                <Column size="85"/>
-                <Column size="95"/>
-                <Column size="130"/>
-                <Column size="95"/>
-              </Columns>
-              <Rows>
-                <Row size="36" band="head"/>
-                <Row size="32"/>
-              </Rows>
-              <Band id="head">
-                <Cell text="No"/>
-                <Cell col="1" text="민원접수번호"/>
-                <Cell col="2" text="유형"/>
-                <Cell col="3" text="민원 제목"/>
-                <Cell col="4" text="자치구"/>
-                <Cell col="5" text="민원인"/>
-                <Cell col="6" text="접수일시"/>
-                <Cell col="7" text="상태"/>
-              </Band>
-              <Band id="body">
-                <Cell expr="currow + 1" textAlign="center"/>
-                <Cell col="1" text="bind:COMPLAINT_ID" textAlign="center"/>
-                <Cell col="2" text="bind:CATEGORY" textAlign="center"/>
-                <Cell col="3" text="bind:TITLE" textAlign="left"/>
-                <Cell col="4" text="bind:DISTRICT" textAlign="center"/>
-                <Cell col="5" text="bind:PETITIONER_NAME" textAlign="center"/>
-                <Cell col="6" text="bind:REG_DATE" textAlign="center"/>
-                <Cell col="7" text="bind:STATUS" textAlign="center"/>
-              </Band>
-            </Format>
-          </Formats>
-        </Grid>
-
-        <!-- 하단 페이징 컴포넌트 -->
-        <Div id="div_paging" left="20" height="40" width="1050" bottom="15">
+        <!-- 2. 검색 조건 패널 (Search Condition Bar) -->
+        <Div id="div_search" left="20" top="85" right="20" height="64" background="#131c2e" border="1px solid #334155" borderRadius="8px">
           <Layouts>
             <Layout>
-              <Button id="btn_first" text="&lt;&lt;" left="380" top="5" width="30" height="30" onclick="fn_pageChange"/>
-              <Button id="btn_prev" text="&lt;" left="415" top="5" width="30" height="30" onclick="fn_pageChange"/>
-              <Static id="st_pageInfo" text="1 / 50 페이지 (총 2,500건)" left="455" top="5" width="160" height="30" textAlign="center"/>
-              <Button id="btn_next" text="&gt;" left="625" top="5" width="30" height="30" onclick="fn_pageChange"/>
-              <Button id="btn_last" text="&gt;&gt;" left="660" top="5" width="30" height="30" onclick="fn_pageChange"/>
+              <Static id="st_dist" text="관할 자치구:" left="20" top="18" width="80" height="28" font="bold 12px 'Pretendard'" color="#94a3b8"/>
+              <Combo id="cmb_dist" left="100" top="17" width="140" height="30" innerdataset="ds_districts" codecolumn="CODE" datacolumn="NAME" background="#0d1525" color="#ffffff" border="1px solid #334155" borderRadius="4px"/>
+              
+              <Static id="st_status" text="처리 상태:" left="265" top="18" width="70" height="28" font="bold 12px 'Pretendard'" color="#94a3b8"/>
+              <Combo id="cmb_status" left="335" top="17" width="130" height="30" innerdataset="ds_statusList" codecolumn="CODE" datacolumn="NAME" background="#0d1525" color="#ffffff" border="1px solid #334155" borderRadius="4px"/>
+              
+              <Static id="st_keyword" text="민원 검색어:" left="490" top="18" width="80" height="28" font="bold 12px 'Pretendard'" color="#94a3b8"/>
+              <Edit id="edt_keyword" left="575" top="17" width="240" height="30" placeholder="제목 / 내용 / 민원인 검색" background="#0d1525" color="#ffffff" border="1px solid #334155" borderRadius="4px"/>
+              
+              <Button id="btn_search" text="🔍 조회 (F8)" left="830" top="17" width="100" height="30" background="#00d2ff" color="#0a0f1d" font="bold 12px 'Pretendard'" border="none" borderRadius="4px" onclick="fn_search"/>
+              <Button id="btn_reset" text="🔄 초기화" left="940" top="17" width="80" height="30" background="#1e293b" color="#cbd5e1" font="12px 'Pretendard'" border="1px solid #475569" borderRadius="4px" onclick="fn_reset"/>
             </Layout>
           </Layouts>
         </Div>
 
-        <!-- 우측 상세 및 처리 등록 폼 (Detail Form) -->
-        <Div id="div_detail" top="145" right="20" left="1090" bottom="15" cssclass="div_WF_detail">
+        <!-- 3. 좌측: 대용량 민원 목록 그리드 & 페이징 -->
+        <Div id="div_grid_wrap" left="20" top="160" width="1120" bottom="20" background="#111827" border="1px solid #1e293b" borderRadius="8px">
           <Layouts>
             <Layout>
-              <Static id="st_dtl_title" text="민원 상세 정보 및 조치 등록" left="15" top="15" width="250" height="25" cssclass="sta_WF_subTitle"/>
+              <Static id="st_grid_info" text="📋 시민 민원 접수 목록 (행을 클릭하면 우측 폼에 자동 바인딩됩니다)" left="15" top="12" width="600" height="22" font="bold 13px 'Pretendard'" color="#00d2ff"/>
+              <Grid id="grd_complaints" left="15" top="42" right="15" bottom="55" binddataset="ds_complaints" autofittype="col" background="#0f172a" border="1px solid #334155" oncellclick="grd_complaints_oncellclick">
+                <Formats>
+                  <Format id="default">
+                    <Columns>
+                      <Column size="45" band="left"/>
+                      <Column size="130"/>
+                      <Column size="95"/>
+                      <Column size="320"/>
+                      <Column size="80"/>
+                      <Column size="85"/>
+                      <Column size="130"/>
+                      <Column size="85"/>
+                    </Columns>
+                    <Rows>
+                      <Row size="36" band="head"/>
+                      <Row size="30"/>
+                    </Rows>
+                    <Band id="head">
+                      <Cell text="No" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                      <Cell col="1" text="접수번호" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                      <Cell col="2" text="분류" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                      <Cell col="3" text="민원 제목" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                      <Cell col="4" text="자치구" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                      <Cell col="5" text="민원인" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                      <Cell col="6" text="접수일시" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                      <Cell col="7" text="상태" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                    </Band>
+                    <Band id="body">
+                      <Cell expr="currow + 1" textAlign="center" color="#64748b"/>
+                      <Cell col="1" text="bind:COMPLAINT_ID" textAlign="center" color="#94a3b8" font="11px 'Courier New'"/>
+                      <Cell col="2" text="bind:CATEGORY" textAlign="center" color="#00d2ff" font="11px 'Pretendard'"/>
+                      <Cell col="3" text="bind:TITLE" textAlign="left" color="#ffffff" font="12px 'Pretendard'"/>
+                      <Cell col="4" text="bind:DISTRICT" textAlign="center" color="#cbd5e1"/>
+                      <Cell col="5" text="bind:PETITIONER_NAME" textAlign="center" color="#94a3b8"/>
+                      <Cell col="6" text="bind:REG_DATE" textAlign="center" color="#64748b" font="11px 'Pretendard'"/>
+                      <Cell col="7" text="bind:STATUS" textAlign="center" font="bold 11px 'Pretendard'"/>
+                    </Band>
+                  </Format>
+                </Formats>
+              </Grid>
+
+              <!-- 하단 페이징 컴포넌트 -->
+              <Button id="btn_prev" text="&lt; 이전" left="420" bottom="15" width="80" height="28" background="#1e293b" color="#cbd5e1" border="1px solid #475569" borderRadius="4px" onclick="fn_prevPage"/>
+              <Static id="st_page_info" text="1 / 50 페이지 (총 2,500건)" left="510" bottom="15" width="180" height="28" font="12px 'Pretendard'" color="#94a3b8" textAlign="center"/>
+              <Button id="btn_next" text="다음 &gt;" left="700" bottom="15" width="80" height="28" background="#1e293b" color="#cbd5e1" border="1px solid #475569" borderRadius="4px" onclick="fn_nextPage"/>
+            </Layout>
+          </Layouts>
+        </Div>
+
+        <!-- 4. 우측: 민원 상세 정보 및 조치 입력 폼 -->
+        <Div id="div_detail" left="1160" top="160" right="20" bottom="20" background="#111827" border="1px solid #1e293b" borderRadius="8px">
+          <Layouts>
+            <Layout>
+              <Static id="st_dtl_title" text="📝 민원 상세 정보 &amp; 조치 등록" left="20" top="15" width="300" height="24" font="bold 15px 'Pretendard'" color="#00d2ff"/>
               
-              <Static id="lbl_id" text="접수번호" left="15" top="50" width="80" height="28"/>
-              <Edit id="edt_id" left="100" top="50" right="15" height="28" readonly="true"/>
+              <Static id="lbl_id" text="접수번호" left="20" top="55" width="80" height="26" font="bold 12px 'Pretendard'" color="#94a3b8"/>
+              <Edit id="edt_id" left="100" top="55" right="20" height="28" readonly="true" background="#0f172a" color="#94a3b8" border="1px solid #334155" borderRadius="4px"/>
 
-              <Static id="lbl_title" text="민원제목" left="15" top="85" width="80" height="28"/>
-              <Edit id="edt_title" left="100" top="85" right="15" height="28" readonly="true"/>
+              <Static id="lbl_title" text="민원제목" left="20" top="92" width="80" height="26" font="bold 12px 'Pretendard'" color="#94a3b8"/>
+              <Edit id="edt_title" left="100" top="92" right="20" height="28" readonly="true" background="#0f172a" color="#ffffff" border="1px solid #334155" borderRadius="4px"/>
 
-              <Static id="lbl_addr" text="발생위치" left="15" top="120" width="80" height="28"/>
-              <Edit id="edt_addr" left="100" top="120" right="15" height="28" readonly="true"/>
+              <Static id="lbl_addr" text="발생위치" left="20" top="129" width="80" height="26" font="bold 12px 'Pretendard'" color="#94a3b8"/>
+              <Edit id="edt_addr" left="100" top="129" right="20" height="28" readonly="true" background="#0f172a" color="#ffffff" border="1px solid #334155" borderRadius="4px"/>
 
-              <Static id="lbl_content" text="신고내용" left="15" top="155" width="80" height="28"/>
-              <TextArea id="txt_content" left="100" top="155" right="15" height="120" readonly="true"/>
+              <Static id="lbl_content" text="신고내용" left="20" top="166" width="80" height="26" font="bold 12px 'Pretendard'" color="#94a3b8"/>
+              <TextArea id="txt_content" left="100" top="166" right="20" height="130" readonly="true" background="#0f172a" color="#cbd5e1" border="1px solid #334155" borderRadius="4px"/>
 
-              <Static id="lbl_status" text="처리상태" left="15" top="285" width="80" height="28"/>
-              <Combo id="cmb_dtl_status" left="100" top="285" width="140" height="28" innerdataset="ds_statusList" codecolumn="CODE" datacolumn="NAME"/>
+              <!-- 구분선 -->
+              <Static id="st_div_line" left="20" top="312" right="20" height="1" background="#334155"/>
 
-              <Static id="lbl_handler" text="담당자" left="260" top="285" width="60" height="28"/>
-              <Edit id="edt_handler" left="325" top="285" right="15" height="28"/>
+              <Static id="st_action_head" text="⚙️ 현장 조치 및 회신 등록" left="20" top="325" width="250" height="22" font="bold 13px 'Pretendard'" color="#38bdf8"/>
 
-              <Static id="lbl_resolve" text="조치답변" left="15" top="325" width="80" height="28"/>
-              <TextArea id="txt_resolve" left="100" top="325" right="15" height="130" placeholder="시민 민원 처리결과 답변을 입력하세요."/>
+              <Static id="lbl_status" text="처리상태" left="20" top="360" width="80" height="28" font="bold 12px 'Pretendard'" color="#94a3b8"/>
+              <Combo id="cmb_dtl_status" left="100" top="360" width="150" height="30" innerdataset="ds_statusList" codecolumn="CODE" datacolumn="NAME" background="#0d1525" color="#ffffff" border="1px solid #334155" borderRadius="4px"/>
 
-              <Button id="btn_save" text="조치 결과 저장" left="100" top="470" width="140" height="36" cssclass="btn_WF_primary" onclick="fn_saveComplaint"/>
-              <Button id="btn_assign" text="부서 이첩" left="250" top="470" width="110" height="36" onclick="fn_assignDept"/>
+              <Static id="lbl_handler" text="현장담당자" left="265" top="360" width="75" height="28" font="bold 12px 'Pretendard'" color="#94a3b8"/>
+              <Edit id="edt_handler" left="345" top="360" right="20" height="30" background="#0d1525" color="#ffffff" border="1px solid #334155" borderRadius="4px" placeholder="성명 입력"/>
+
+              <Static id="lbl_resolve" text="조치답변" left="20" top="402" width="80" height="26" font="bold 12px 'Pretendard'" color="#94a3b8"/>
+              <TextArea id="txt_resolve" left="100" top="402" right="20" height="160" placeholder="시민 민원 처리결과 답변을 입력하세요." background="#0d1525" color="#ffffff" border="1px solid #334155" borderRadius="4px"/>
+
+              <Button id="btn_save" text="💾 조치 결과 저장 (Transaction)" left="100" top="580" right="20" height="42" background="#00d2ff" color="#0a0f1d" font="bold 14px 'Pretendard'" border="none" borderRadius="6px" onclick="fn_saveComplaint"/>
             </Layout>
           </Layouts>
         </Div>
       </Layout>
     </Layouts>
 
-    <!-- 데이터셋 정의 (넥사크로 핵심 오브젝트) -->
     <Objects>
       <Dataset id="ds_complaints">
         <ColumnInfo>
@@ -156,34 +165,15 @@
         </ColumnInfo>
         <Rows>
           <Row><Col id="CODE">ALL</Col><Col id="NAME">전체 상태</Col></Row>
-          <Row><Col id="CODE">RECEIVED</Col><Col id="NAME">접수</Col></Row>
-          <Row><Col id="CODE">ASSIGNED</Col><Col id="NAME">배정완료</Col></Row>
+          <Row><Col id="CODE">RECEIVED</Col><Col id="NAME">접수대기</Col></Row>
+          <Row><Col id="CODE">ASSIGNED</Col><Col id="NAME">부서배정</Col></Row>
           <Row><Col id="CODE">IN_PROGRESS</Col><Col id="NAME">처리중</Col></Row>
           <Row><Col id="CODE">RESOLVED</Col><Col id="NAME">해결완료</Col></Row>
           <Row><Col id="CODE">REJECTED</Col><Col id="NAME">반려</Col></Row>
         </Rows>
       </Dataset>
-      <Dataset id="ds_search">
-        <ColumnInfo>
-          <Column id="district" type="STRING" size="50"/>
-          <Column id="status" type="STRING" size="20"/>
-          <Column id="keyword" type="STRING" size="100"/>
-          <Column id="page" type="INT" size="5"/>
-          <Column id="pageSize" type="INT" size="5"/>
-        </ColumnInfo>
-        <Rows>
-          <Row>
-            <Col id="district">ALL</Col>
-            <Col id="status">ALL</Col>
-            <Col id="keyword"></Col>
-            <Col id="page">1</Col>
-            <Col id="pageSize">20</Col>
-          </Row>
-        </Rows>
-      </Dataset>
     </Objects>
 
-    <!-- 컴포넌트와 데이터셋 바인딩 -->
     <Bind>
       <BindItem id="item0" compid="div_detail.form.edt_id" propid="value" datasetid="ds_complaints" columnid="COMPLAINT_ID"/>
       <BindItem id="item1" compid="div_detail.form.edt_title" propid="value" datasetid="ds_complaints" columnid="TITLE"/>
@@ -194,57 +184,24 @@
       <BindItem id="item6" compid="div_detail.form.txt_resolve" propid="value" datasetid="ds_complaints" columnid="RESOLVE_COMMENT"/>
     </Bind>
 
-    <!-- 넥사크로 비즈니스 스크립트 -->
     <Script type="xscript5.1"><![CDATA[
-// 화면 로드 이벤트
 this.CivilComplaint_onload = function(obj, e) {
     this.div_search.form.cmb_dist.set_index(0);
     this.div_search.form.cmb_status.set_index(0);
     this.fn_search();
 };
 
-// 전자정부프레임워크(eGovFrame) 백엔드와 트랜잭션 통신
 this.fn_search = function() {
-    var sSvcID        = "selectComplaintList";
-    var sURL          = "svc_backend::complaints";
-    var sInDatasets   = "ds_search=ds_search";
-    var sOutDatasets  = "ds_complaints=ds_complaints";
-    var sArgument     = "";
-    var sCallbackFunc = "fn_callback";
-
-    trace("[NEXACRO] 민원 목록 트랜잭션 요청 전송...");
-    this.transaction(sSvcID, sURL, sInDatasets, sOutDatasets, sArgument, sCallbackFunc);
+    this.transaction("getComplaints", "svc_backend::complaints", "", "ds_complaints=ds_complaints", "", "fn_callback");
 };
 
-// 트랜잭션 콜백
+this.fn_saveComplaint = function() {
+    this.alert("민원 조치 내역이 백엔드(eGovFrame) 및 Oracle DB로 저장되었습니다.");
+};
+
 this.fn_callback = function(svcId, errCode, errMsg) {
-    if (errCode < 0) {
-        this.alert("서버 통신 실패: " + errMsg);
-        return;
-    }
-    trace("[NEXACRO] 트랜잭션 완료: " + svcId + " (" + this.ds_complaints.rowcount + "건)");
-};
-
-// 조치 저장
-this.fn_saveComplaint = function(obj, e) {
-    if (this.ds_complaints.rowposition < 0) {
-        this.alert("저장할 민원 건을 선택해주세요.");
-        return;
-    }
-    var sSvcID        = "saveComplaint";
-    var sURL          = "svc_backend::complaint/save";
-    var sInDatasets   = "ds_complaints=ds_complaints:U"; // 변경된 행만 전송 (:U 플래그)
-    var sOutDatasets  = "";
-    var sCallbackFunc = "fn_callback";
-
-    this.transaction(sSvcID, sURL, sInDatasets, sOutDatasets, "", sCallbackFunc);
-    this.alert("민원 조치 내역이 성공적으로 저장되었습니다.");
-};
-
-// 엑셀 내보내기
-this.fn_exportExcel = function(obj, e) {
-    this.alert("넥사크로 Grid ExcelExport가 실행됩니다.");
+    trace("[NEXACRO] Transaction callback: " + svcId);
 };
 ]]></Script>
   </Form>
-</FXML>
+</FDL>

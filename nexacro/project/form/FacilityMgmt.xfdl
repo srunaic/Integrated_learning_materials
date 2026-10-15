@@ -1,110 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FXML version="2.1">
-  <Form id="FacilityMgmt" width="1600" height="900" titletext="스마트시티 공공시설물 자산 및 유지보수 관리" onload="FacilityMgmt_onload">
+<FDL version="2.1">
+  <Form id="FacilityMgmt" width="1680" height="960" titletext="공공 시설물 자산 &amp; 점검 관리" onload="FacilityMgmt_onload" background="#0a0f1d">
     <Layouts>
-      <Layout width="1600" height="900">
-        <Static id="st_title" text="공공 시설물 자산 마스터 &amp; 점검 관리" left="20" top="15" width="450" height="30" cssclass="sta_WF_title01"/>
-        <Static id="st_subtitle" text="CCTV, 스마트가로등, 쉘터, 급속충전기 등 도심 시설물 가동상태 및 점검이력 관제" left="20" top="45" width="600" height="20" cssclass="sta_WF_subTitle"/>
-
-        <Div id="div_search" left="20" top="75" right="20" height="60" cssclass="div_WF_search">
+      <Layout width="1680" height="960">
+        <!-- 1. 상단 타이틀 바 -->
+        <Div id="div_header" left="20" top="15" right="20" height="60" background="#111827" border="1px solid #1e293b" borderRadius="8px">
           <Layouts>
             <Layout>
-              <Static id="st_type" text="시설물 유형" left="15" top="15" width="80" height="30"/>
-              <Combo id="cmb_type" left="100" top="15" width="160" height="30" innerdataset="ds_types" codecolumn="CODE" datacolumn="NAME"/>
-              
-              <Static id="st_status" text="운영 상태" left="280" top="15" width="70" height="30"/>
-              <Combo id="cmb_status" left="355" top="15" width="120" height="30" innerdataset="ds_opStatus" codecolumn="CODE" datacolumn="NAME"/>
-
-              <Button id="btn_search" text="조회" left="500" top="15" width="90" height="30" cssclass="btn_WF_search" onclick="fn_search"/>
-              <Button id="btn_new" text="+ 신규 시설 등록" right="15" top="15" width="130" height="30" cssclass="btn_WF_primary" onclick="fn_addFacility"/>
+              <Static id="st_icon" text="🏢" left="15" top="12" width="36" height="36" font="22px/normal 'Segoe UI Emoji'" textAlign="center"/>
+              <Static id="st_title" text="스마트시티 공공 시설물 자산 &amp; 유지보수 점검 관리" left="60" top="10" width="550" height="24" font="bold 18px 'Pretendard', 'Malgun Gothic'" color="#ffffff"/>
+              <Static id="st_subtitle" text="도심 시설물(CCTV, 스마트가로등, 쉘터, 급속충전기 등)의 마스터 정보와 정기/긴급 점검 이력 관제" left="60" top="34" width="700" height="18" font="11px 'Pretendard'" color="#64748b"/>
+              <Button id="btn_new_fac" text="+ 신규 시설물 등록" right="15" top="14" width="160" height="32" background="#00d2ff" color="#0a0f1d" font="bold 12px 'Pretendard'" border="none" borderRadius="4px" onclick="fn_addFacility"/>
             </Layout>
           </Layouts>
         </Div>
 
-        <!-- 상단: 시설물 그리드 -->
-        <Grid id="grd_facility" left="20" top="145" right="20" height="400" binddataset="ds_facilities" autofittype="col" oncellclick="grd_facility_oncellclick">
-          <Formats>
-            <Format id="default">
-              <Columns>
-                <Column size="110"/>
-                <Column size="220"/>
-                <Column size="100"/>
-                <Column size="85"/>
-                <Column size="240"/>
-                <Column size="90"/>
-                <Column size="110"/>
-                <Column size="100"/>
-              </Columns>
-              <Rows>
-                <Row size="36" band="head"/>
-                <Row size="30"/>
-              </Rows>
-              <Band id="head">
-                <Cell text="시설물 코드"/>
-                <Cell col="1" text="시설물 명칭"/>
-                <Cell col="2" text="유형"/>
-                <Cell col="3" text="자치구"/>
-                <Cell col="4" text="설치 위치"/>
-                <Cell col="5" text="운영상태"/>
-                <Cell col="6" text="설치일자"/>
-                <Cell col="7" text="관리부서"/>
-              </Band>
-              <Band id="body">
-                <Cell text="bind:FAC_ID" textAlign="center"/>
-                <Cell col="1" text="bind:FAC_NAME" textAlign="left"/>
-                <Cell col="2" text="bind:FAC_TYPE" textAlign="center"/>
-                <Cell col="3" text="bind:DISTRICT" textAlign="center"/>
-                <Cell col="4" text="bind:LOCATION_ADDR" textAlign="left"/>
-                <Cell col="5" text="bind:OP_STATUS" textAlign="center"/>
-                <Cell col="6" text="bind:INSTALL_DATE" textAlign="center"/>
-                <Cell col="7" text="bind:MANAGE_DEPT" textAlign="center"/>
-              </Band>
-            </Format>
-          </Formats>
-        </Grid>
+        <!-- 2. 상단 시설물 마스터 그리드 (Master Grid) -->
+        <Div id="div_fac_wrap" left="20" top="85" right="20" height="420" background="#111827" border="1px solid #1e293b" borderRadius="8px">
+          <Layouts>
+            <Layout>
+              <Static id="st_fac_head" text="🏛️ 공공시설물 자산 마스터 (시설물을 클릭하면 하단에 점검 이력이 연동됩니다)" left="15" top="12" width="600" height="22" font="bold 13px 'Pretendard'" color="#00d2ff"/>
+              <Grid id="grd_facilities" left="15" top="42" right="15" bottom="15" binddataset="ds_facilities" autofittype="col" background="#0f172a" border="1px solid #334155" oncellclick="grd_facilities_oncellclick">
+                <Formats>
+                  <Format id="default">
+                    <Columns>
+                      <Column size="110"/>
+                      <Column size="220"/>
+                      <Column size="105"/>
+                      <Column size="85"/>
+                      <Column size="260"/>
+                      <Column size="95"/>
+                      <Column size="110"/>
+                      <Column size="110"/>
+                    </Columns>
+                    <Rows>
+                      <Row size="34" band="head"/>
+                      <Row size="28"/>
+                    </Rows>
+                    <Band id="head">
+                      <Cell text="시설물 코드" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                      <Cell col="1" text="시설물 명칭" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                      <Cell col="2" text="유형" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                      <Cell col="3" text="자치구" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                      <Cell col="4" text="설치 위치 상세" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                      <Cell col="5" text="운영상태" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                      <Cell col="6" text="설치일자" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                      <Cell col="7" text="관리부서" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                    </Band>
+                    <Band id="body">
+                      <Cell text="bind:FAC_ID" textAlign="center" color="#94a3b8" font="11px 'Courier New'"/>
+                      <Cell col="1" text="bind:FAC_NAME" textAlign="left" color="#ffffff" font="12px 'Pretendard'"/>
+                      <Cell col="2" text="bind:FAC_TYPE" textAlign="center" color="#38bdf8" font="11px 'Pretendard'"/>
+                      <Cell col="3" text="bind:DISTRICT" textAlign="center" color="#cbd5e1"/>
+                      <Cell col="4" text="bind:LOCATION_ADDR" textAlign="left" color="#94a3b8"/>
+                      <Cell col="5" text="bind:OP_STATUS" textAlign="center" font="bold 11px 'Pretendard'"/>
+                      <Cell col="6" text="bind:INSTALL_DATE" textAlign="center" color="#64748b"/>
+                      <Cell col="7" text="bind:MANAGE_DEPT" textAlign="center" color="#cbd5e1"/>
+                    </Band>
+                  </Format>
+                </Formats>
+              </Grid>
+            </Layout>
+          </Layouts>
+        </Div>
 
-        <!-- 하단: 선택된 시설물의 유지보수 점검 이력 (Master-Detail 관계) -->
-        <Static id="st_sub_grid" text="선택 시설물 점검 및 수리 이력 (Inspection History)" left="20" top="560" width="400" height="25" cssclass="sta_WF_subTitle"/>
-        <Grid id="grd_insp" left="20" top="590" right="20" bottom="20" binddataset="ds_inspections" autofittype="col">
-          <Formats>
-            <Format id="default">
-              <Columns>
-                <Column size="120"/>
-                <Column size="100"/>
-                <Column size="90"/>
-                <Column size="80"/>
-                <Column size="100"/>
-                <Column size="350"/>
-                <Column size="110"/>
-                <Column size="100"/>
-              </Columns>
-              <Rows>
-                <Row size="32" band="head"/>
-                <Row size="28"/>
-              </Rows>
-              <Band id="head">
-                <Cell text="점검번호"/>
-                <Cell col="1" text="점검일자"/>
-                <Cell col="2" text="점검유형"/>
-                <Cell col="3" text="결과"/>
-                <Cell col="4" text="점검자"/>
-                <Cell col="5" text="조치 및 점검 상세내역"/>
-                <Cell col="6" text="수리비용(원)"/>
-                <Cell col="7" text="차기예정일"/>
-              </Band>
-              <Band id="body">
-                <Cell text="bind:INSP_ID" textAlign="center"/>
-                <Cell col="1" text="bind:INSP_DATE" textAlign="center"/>
-                <Cell col="2" text="bind:INSP_TYPE" textAlign="center"/>
-                <Cell col="3" text="bind:INSP_STATUS" textAlign="center"/>
-                <Cell col="4" text="bind:INSPECTOR_NAME" textAlign="center"/>
-                <Cell col="5" text="bind:ACTION_DETAILS" textAlign="left"/>
-                <Cell col="6" text="bind:REPAIR_COST" textAlign="right"/>
-                <Cell col="7" text="bind:NEXT_INSP_DATE" textAlign="center"/>
-              </Band>
-            </Format>
-          </Formats>
-        </Grid>
+        <!-- 3. 하단 유지보수 점검 이력 (Detail Grid) -->
+        <Div id="div_insp_wrap" left="20" top="520" right="20" bottom="20" background="#111827" border="1px solid #1e293b" borderRadius="8px">
+          <Layouts>
+            <Layout>
+              <Static id="st_insp_head" text="🔧 선택된 시설물 유지보수 및 정기점검 이력 (Inspection History)" left="15" top="12" width="600" height="22" font="bold 13px 'Pretendard'" color="#10b981"/>
+              <Grid id="grd_inspections" left="15" top="42" right="15" bottom="15" binddataset="ds_inspections" autofittype="col" background="#0f172a" border="1px solid #334155">
+                <Formats>
+                  <Format id="default">
+                    <Columns>
+                      <Column size="130"/>
+                      <Column size="105"/>
+                      <Column size="95"/>
+                      <Column size="85"/>
+                      <Column size="100"/>
+                      <Column size="380"/>
+                      <Column size="110"/>
+                      <Column size="110"/>
+                    </Columns>
+                    <Rows>
+                      <Row size="32" band="head"/>
+                      <Row size="26"/>
+                    </Rows>
+                    <Band id="head">
+                      <Cell text="점검번호" background="#1e293b" color="#cbd5e1" font="bold 11px 'Pretendard'"/>
+                      <Cell col="1" text="점검일자" background="#1e293b" color="#cbd5e1" font="bold 11px 'Pretendard'"/>
+                      <Cell col="2" text="점검유형" background="#1e293b" color="#cbd5e1" font="bold 11px 'Pretendard'"/>
+                      <Cell col="3" text="결과" background="#1e293b" color="#cbd5e1" font="bold 11px 'Pretendard'"/>
+                      <Cell col="4" text="점검원" background="#1e293b" color="#cbd5e1" font="bold 11px 'Pretendard'"/>
+                      <Cell col="5" text="조치 및 점검 상세내역" background="#1e293b" color="#cbd5e1" font="bold 11px 'Pretendard'"/>
+                      <Cell col="6" text="수리비용(원)" background="#1e293b" color="#cbd5e1" font="bold 11px 'Pretendard'"/>
+                      <Cell col="7" text="차기예정일" background="#1e293b" color="#cbd5e1" font="bold 11px 'Pretendard'"/>
+                    </Band>
+                    <Band id="body">
+                      <Cell text="bind:INSP_ID" textAlign="center" color="#94a3b8" font="10px 'Courier New'"/>
+                      <Cell col="1" text="bind:INSP_DATE" textAlign="center" color="#cbd5e1"/>
+                      <Cell col="2" text="bind:INSP_TYPE" textAlign="center" color="#38bdf8"/>
+                      <Cell col="3" text="bind:INSP_STATUS" textAlign="center" font="bold 11px 'Pretendard'"/>
+                      <Cell col="4" text="bind:INSPECTOR_NAME" textAlign="center" color="#ffffff"/>
+                      <Cell col="5" text="bind:ACTION_DETAILS" textAlign="left" color="#cbd5e1"/>
+                      <Cell col="6" text="bind:REPAIR_COST" textAlign="right" color="#fbbf24" font="bold 11px 'Courier New'"/>
+                      <Cell col="7" text="bind:NEXT_INSP_DATE" textAlign="center" color="#94a3b8"/>
+                    </Band>
+                  </Format>
+                </Formats>
+              </Grid>
+            </Layout>
+          </Layouts>
+        </Div>
       </Layout>
     </Layouts>
 
@@ -134,56 +141,21 @@
           <Column id="NEXT_INSP_DATE" type="STRING" size="30"/>
         </ColumnInfo>
       </Dataset>
-      <Dataset id="ds_types">
-        <ColumnInfo>
-          <Column id="CODE" type="STRING" size="20"/>
-          <Column id="NAME" type="STRING" size="50"/>
-        </ColumnInfo>
-        <Rows>
-          <Row><Col id="CODE">ALL</Col><Col id="NAME">전체 시설</Col></Row>
-          <Row><Col id="CODE">STREET_LIGHT</Col><Col id="NAME">스마트가로등</Col></Row>
-          <Row><Col id="CODE">CCTV</Col><Col id="NAME">방범CCTV</Col></Row>
-          <Row><Col id="CODE">SHELTER</Col><Col id="NAME">스마트쉘터</Col></Row>
-          <Row><Col id="CODE">EV_CHARGER</Col><Col id="NAME">전기차충전기</Col></Row>
-          <Row><Col id="CODE">PUMP</Col><Col id="NAME">배수펌프</Col></Row>
-        </Rows>
-      </Dataset>
-      <Dataset id="ds_opStatus">
-        <ColumnInfo>
-          <Column id="CODE" type="STRING" size="20"/>
-          <Column id="NAME" type="STRING" size="50"/>
-        </ColumnInfo>
-        <Rows>
-          <Row><Col id="CODE">ALL</Col><Col id="NAME">전체</Col></Row>
-          <Row><Col id="CODE">NORMAL</Col><Col id="NAME">정상가동</Col></Row>
-          <Row><Col id="CODE">WARNING</Col><Col id="NAME">점검필요</Col></Row>
-          <Row><Col id="CODE">ERROR</Col><Col id="NAME">장애/고장</Col></Row>
-        </Rows>
-      </Dataset>
     </Objects>
 
     <Script type="xscript5.1"><![CDATA[
 this.FacilityMgmt_onload = function(obj, e) {
-    this.div_search.form.cmb_type.set_index(0);
-    this.div_search.form.cmb_status.set_index(0);
-    this.fn_search();
+    this.transaction("getFacilities", "svc_backend::facilities", "", "ds_facilities=ds_facilities", "", "fn_callback");
 };
 
-this.fn_search = function() {
-    this.transaction("selectFacilityList", "svc_backend::facilities", "", "ds_facilities=ds_facilities", "", "fn_callback");
-};
-
-this.grd_facility_oncellclick = function(obj, e) {
+this.grd_facilities_oncellclick = function(obj, e) {
     var sFacId = this.ds_facilities.getColumn(e.row, "FAC_ID");
-    trace("[NEXACRO] 선택된 시설물 ID: " + sFacId);
-    this.transaction("selectInspList", "svc_backend::inspections", "", "ds_inspections=ds_inspections", "facId=" + sFacId, "fn_callback");
+    this.transaction("getInspections", "svc_backend::inspections", "", "ds_inspections=ds_inspections", "facId=" + sFacId, "fn_callback");
 };
 
 this.fn_callback = function(svcId, errCode, errMsg) {
-    if (errCode < 0) {
-        this.alert("통신 오류: " + errMsg);
-    }
+    trace("[NEXACRO] Facility callback: " + svcId);
 };
 ]]></Script>
   </Form>
-</FXML>
+</FDL>

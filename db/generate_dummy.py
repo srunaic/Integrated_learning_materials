@@ -1,14 +1,13 @@
 """
 스마트시티 / 공공시설 통합 민원 및 시설물 관리 시스템
-대용량 가상 더미 데이터 자동 생성기 (Faker 기반)
+대용량 가상 더미 데이터 자동 생성기 (Faker + Excel 통합 관리)
 
-[특징 및 PC 최적화 설계]
-1. 메모리 보호: 제너레이터(Generator) 패턴과 청크(Chunk) 분할을 적용하여 수십만 건 생성 시에도 RAM 점유율 극소화
-2. 오라클 호환: 날짜 포맷 (TO_DATE) 및 인코딩 UTF-8 자동 처리
-3. 듀얼 출력:
-   - .sql 파일 분할 생성 (Oracle SQL Developer, SQL*Plus에서 바로 실행 가능)
-   - JSON Mock 데이터 자동 생성 (웹/넥사크로 프론트엔드 및 GitHub Pages 데모용)
-   - (선택) Oracle DB 직접 접속 대량 Bulk Insert 지원 (oracledb 라이브러리 연동)
+[주요 기능]
+1. Python Faker 한국어 기반 실감형 데이터 생성 (시설물, 민원, 점검, IoT 센서)
+2. 메모리 최적화: 청크 단위 분할 생성으로 PC 부하 원천 차단
+3. 엑셀(Excel) 날짜별 자동 리포트 생성 (db/excel_logs/스마트시티_통합데이터_YYYYMMDD_HHMM.xlsx)
+   - 시설물, 민원, 점검, 센서, KPI 5개 시트 서식 자동 적용
+4. 웹 Mock JSON 및 오라클 SQL 파일 자동 동기화 갱신
 """
 
 import os
@@ -18,22 +17,22 @@ import datetime
 import json
 import argparse
 from faker import Faker
+import openpyxl
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
 
 # 한국어 로케일 설정
 fake = Faker('ko_KR')
 
-# -------------------------------------------------------------
-# 스마트시티 도메인 마스터 데이터 정의
-# -------------------------------------------------------------
 DISTRICTS = ['강남구', '서초구', '송파구', '마포구', '영등포구', '종로구', '중구', '성동구', '용산구', '강동구']
 
 FACILITY_TYPES = [
-    ('STREET_LIGHT', '스마트 안심 가로등', ['조도센서', '동체감지기', '비상벨']),
-    ('CCTV', '지능형 방범 CCTV', ['차량번호인식', '이상행동감지', '침입탐지']),
-    ('SHELTER', '스마트 버스 쉘터', ['미세먼지정화기', '온열의자', '버스정보안내기']),
-    ('EV_CHARGER', '친환경 전기차 급속충전기', ['전력계량기', '충전케이블', '결제단말기']),
-    ('PUMP', '지하차도/하천 자동 배수펌프', ['수위센서', '압력계', '원격제어반']),
-    ('BIKE_STATION', '공공 스마트 자전거 스테이션', ['자전거거치대', 'IoT락커', '태양광패널'])
+    ('STREET_LIGHT', '스마트 안심 가로등', '도로시설과'),
+    ('CCTV', '지능형 방범 CCTV', '스마트안전과'),
+    ('SHELTER', '스마트 버스 쉘터', '교통행정과'),
+    ('EV_CHARGER', '친환경 전기차 급속충전기', '기후환경과'),
+    ('PUMP', '지하차도 자동 배수펌프', '치수방재과'),
+    ('BIKE_STATION', '공공 스마트 따릉이 스테이션', '보행자전거과')
 ]
 
 COMPLAINT_TEMPLATES = [
@@ -62,31 +61,22 @@ COMPLAINT_TEMPLATES = [
     ])
 ]
 
-DEPARTMENTS = ['스마트도시과', '도로과', '교통행정과', '치수과', '도시재생과', '공원녹지과']
+DEPARTMENTS = ['스마트도시과', '도로시설과', '교통행정과', '치수방재과', '도시재생과', '공원녹지과']
 STATUS_LIST = ['RECEIVED', 'ASSIGNED', 'IN_PROGRESS', 'RESOLVED', 'REJECTED']
-STATUS_WEIGHTS = [0.15, 0.20, 0.25, 0.35, 0.05]  # 실제 현업 상태 분포 비율 반영
+STATUS_WEIGHTS = [0.15, 0.20, 0.25, 0.35, 0.05]
 
-# -------------------------------------------------------------
-# 더미 데이터 생성 제너레이터 함수
-# -------------------------------------------------------------
-def generate_facilities(count=200):
-    """시설물 마스터 데이터 생성"""
+def generate_facilities(count=150):
     facilities = []
     for i in range(1, count + 1):
-        fac_type_code, fac_type_name, _ = random.choice(FACILITY_TYPES)
+        fac_type_code, fac_type_name, def_dept = random.choice(FACILITY_TYPES)
         district = random.choice(DISTRICTS)
         fac_id = f"FAC-{fac_type_code[:3]}-{i:04d}"
         fac_name = f"{district} {fake.street_name()} {i}호 {fac_type_name}"
         
-        # 서울 좌표권역 기준 (위도 37.45~37.65, 경도 126.85~127.15)
         lat = round(random.uniform(37.480000, 37.620000), 6)
         lng = round(random.uniform(126.880000, 127.120000), 6)
-        
         install_date = fake.date_between(start_date='-5y', end_date='-30d')
         op_status = random.choices(['NORMAL', 'WARNING', 'ERROR', 'SHUTDOWN'], weights=[0.82, 0.12, 0.04, 0.02])[0]
-        manage_dept = random.choice(DEPARTMENTS)
-        manager_name = fake.name()
-        manager_phone = f"010-{random.randint(2000, 9999)}-{random.randint(1000, 9999)}"
         last_insp_date = fake.date_between(start_date=install_date, end_date='today')
 
         facilities.append({
@@ -99,16 +89,15 @@ def generate_facilities(count=200):
             'LONGITUDE': lng,
             'INSTALL_DATE': install_date.strftime('%Y-%m-%d'),
             'OP_STATUS': op_status,
-            'MANAGE_DEPT': manage_dept,
-            'MANAGER_NAME': manager_name,
-            'MANAGER_PHONE': manager_phone,
+            'MANAGE_DEPT': def_dept,
+            'MANAGER_NAME': fake.name(),
+            'MANAGER_PHONE': f"010-{random.randint(2000, 9999)}-{random.randint(1000, 9999)}",
             'LAST_INSP_DATE': last_insp_date.strftime('%Y-%m-%d'),
             'REMARKS': f"{fac_type_name} 정기 모니터링 대상"
         })
     return facilities
 
-def generate_inspections(facilities, count=1000):
-    """시설물 점검 이력 생성"""
+def generate_inspections(facilities, count=500):
     inspections = []
     for i in range(1, count + 1):
         fac = random.choice(facilities)
@@ -132,41 +121,37 @@ def generate_inspections(facilities, count=1000):
         })
     return inspections
 
-def generate_complaints(facilities, count=3000):
-    """시민 통합 민원 데이터 생성"""
+def generate_complaints(facilities, count=2500):
     complaints = []
     for i in range(1, count + 1):
         category, templates = random.choice(COMPLAINT_TEMPLATES)
         district = random.choice(DISTRICTS)
         road = fake.street_name()
-        title_tmpl = random.choice(templates)
-        title = title_tmpl.format(district=district, road=road)
+        title = random.choice(templates).format(district=district, road=road)
         
         status = random.choices(STATUS_LIST, weights=STATUS_WEIGHTS)[0]
         reg_date = fake.date_time_between(start_date='-6m', end_date='now')
-        
         related_fac = random.choice(facilities)['FAC_ID'] if random.random() < 0.65 else None
         resolve_date = None
         resolve_comment = None
         satisfaction = None
         handler_name = None
-        assigned_dept = random.choice(DEPARTMENTS)
 
         if status in ['IN_PROGRESS', 'RESOLVED']:
             handler_name = fake.name()
         if status == 'RESOLVED':
             resolve_dt = reg_date + datetime.timedelta(days=random.randint(1, 14), hours=random.randint(1, 10))
             resolve_date = resolve_dt.strftime('%Y-%m-%d %H:%M:%S')
-            resolve_comment = f"신고해주신 {category} 건에 대해 현장 출동하여 조치 완료하였습니다. 협조에 감사드립니다."
+            resolve_comment = f"신고해주신 {category} 건에 대해 현장 출동하여 조치 완료하였습니다."
             satisfaction = random.choices([5, 4, 3, 2, 1], weights=[0.45, 0.35, 0.12, 0.05, 0.03])[0]
         elif status == 'REJECTED':
-            resolve_comment = "해당 구역은 사유지 또는 타 기관 관할이므로 소관 기관으로 이첩 안내되었습니다."
+            resolve_comment = "해당 구역은 사유지 또는 타 기관 관할이므로 소관 부서로 이첩 안내되었습니다."
 
         complaints.append({
             'COMPLAINT_ID': f"CMP-{reg_date.strftime('%Y%m')}-{i:06d}",
             'TITLE': title[:180],
             'CATEGORY': category,
-            'CONTENT': f"[민원신고 상세내용]\n일시: {reg_date.strftime('%Y-%m-%d %H:%M')}\n장소: {district} {road}\n내용: {title}\n신속한 확인 및 조치 부탁드립니다.",
+            'CONTENT': f"[민원신고 상세내용]\n일시: {reg_date.strftime('%Y-%m-%d %H:%M')}\n장소: {district} {road}\n내용: {title}",
             'PETITIONER_NAME': fake.name(),
             'PETITIONER_TEL': f"010-{random.randint(1000,9999)}-{random.randint(1000,9999)}",
             'OCCUR_ADDRESS': f"서울특별시 {district} {road} {random.randint(1, 300)} 부근",
@@ -174,7 +159,7 @@ def generate_complaints(facilities, count=3000):
             'RELATED_FAC_ID': related_fac,
             'REG_DATE': reg_date.strftime('%Y-%m-%d %H:%M:%S'),
             'STATUS': status,
-            'ASSIGNED_DEPT': assigned_dept,
+            'ASSIGNED_DEPT': random.choice(DEPARTMENTS),
             'HANDLER_NAME': handler_name,
             'RESOLVE_DATE': resolve_date,
             'RESOLVE_COMMENT': resolve_comment,
@@ -182,8 +167,7 @@ def generate_complaints(facilities, count=3000):
         })
     return complaints
 
-def generate_sensor_logs(facilities, count=10000):
-    """IoT 센서 시계열 계측 로그 생성"""
+def generate_sensor_logs(facilities, count=5000):
     sensor_types = [
         ('TEMP_HUMID', '℃', 15.0, 32.0),
         ('VIBRATION', 'g', 0.01, 0.45),
@@ -191,24 +175,18 @@ def generate_sensor_logs(facilities, count=10000):
         ('DUST', '㎍/㎥', 10.0, 110.0),
         ('TILT', 'deg', 0.0, 4.5)
     ]
-    
     logs = []
     base_time = datetime.datetime.now()
-    
     for i in range(1, count + 1):
         fac = random.choice(facilities)
         s_type, unit, min_val, max_val = random.choice(sensor_types)
         val = round(random.uniform(min_val, max_val), 2)
-        
         status = 'OK'
         if s_type == 'DUST' and val > 80.0:
             status = 'WARN' if val < 100.0 else 'DANGER'
         elif s_type == 'VIBRATION' and val > 0.35:
             status = 'DANGER'
-        elif s_type == 'TILT' and val > 3.0:
-            status = 'WARN'
-            
-        logged_at = base_time - datetime.timedelta(minutes=random.randint(1, 10080)) # 최근 7일 내
+        logged_at = base_time - datetime.timedelta(minutes=random.randint(1, 10080))
 
         logs.append({
             'LOG_ID': i,
@@ -222,16 +200,106 @@ def generate_sensor_logs(facilities, count=10000):
     return logs
 
 # -------------------------------------------------------------
-# SQL 파일 저장 함수 (청크 분할 및 벌크 최적화)
+# 📊 엑셀(Excel .xlsx) 날짜별 자동 기록 함수 (사용자 요청)
+# -------------------------------------------------------------
+def export_to_excel_report(excel_dir, facilities, complaints, inspections, sensor_logs):
+    """사용자가 직접 열어볼 수 있도록 스타일링된 엑셀 파일 생성"""
+    os.makedirs(excel_dir, exist_ok=True)
+    today_str = datetime.datetime.now().strftime('%Y%m%d_%H%M')
+    excel_path = os.path.join(excel_dir, f"스마트시티_통합데이터_{today_str}.xlsx")
+    
+    wb = openpyxl.Workbook()
+    
+    # 공통 스타일 정의
+    header_font = Font(name='맑은 고딕', size=11, bold=True, color='FFFFFF')
+    header_fill = PatternFill(start_color='1E3A8A', end_color='1E3A8A', fill_type='solid') # 다크네이비
+    sub_fill = PatternFill(start_color='0284C7', end_color='0284C7', fill_type='solid')
+    data_font = Font(name='맑은 고딕', size=10)
+    thin_border = Border(
+        left=Side(style='thin', color='CBD5E1'),
+        right=Side(style='thin', color='CBD5E1'),
+        top=Side(style='thin', color='CBD5E1'),
+        bottom=Side(style='thin', color='CBD5E1')
+    )
+
+    # 1. 시트 1: 시설물 마스터
+    ws_fac = wb.active
+    ws_fac.title = "공공시설물 마스터"
+    fac_headers = ['시설물코드', '시설물명', '유형', '관할구역', '설치주소', '위도', '경도', '설치일자', '운영상태', '관리부서', '담당자', '연락처']
+    ws_fac.append(fac_headers)
+    for f in facilities:
+        ws_fac.append([
+            f['FAC_ID'], f['FAC_NAME'], f['FAC_TYPE'], f['DISTRICT'], f['LOCATION_ADDR'],
+            f['LATITUDE'], f['LONGITUDE'], f['INSTALL_DATE'], f['OP_STATUS'], f['MANAGE_DEPT'],
+            f['MANAGER_NAME'], f['MANAGER_PHONE']
+        ])
+
+    # 2. 시트 2: 시민 민원 접수 내역
+    ws_cmp = wb.create_sheet(title="시민 민원 접수내역")
+    cmp_headers = ['민원접수번호', '분류', '민원제목', '발생주소', '관할구', '신고자명', '연락처', '접수일시', '처리상태', '배정부서', '담당자', '처리답변']
+    ws_cmp.append(cmp_headers)
+    for c in complaints:
+        ws_cmp.append([
+            c['COMPLAINT_ID'], c['CATEGORY'], c['TITLE'], c['OCCUR_ADDRESS'], c['DISTRICT'],
+            c['PETITIONER_NAME'], c['PETITIONER_TEL'], c['REG_DATE'], c['STATUS'], c['ASSIGNED_DEPT'],
+            c['HANDLER_NAME'], c['RESOLVE_COMMENT']
+        ])
+
+    # 3. 시트 3: 시설 점검 이력
+    ws_insp = wb.create_sheet(title="시설물 점검이력")
+    insp_headers = ['점검번호', '시설물코드', '점검일자', '점검유형', '점검결과', '점검원', '조치내역', '수리비용(원)', '차기점검일']
+    ws_insp.append(insp_headers)
+    for i in inspections:
+        ws_insp.append([
+            i['INSP_ID'], i['FAC_ID'], i['INSP_DATE'], i['INSP_TYPE'], i['INSP_STATUS'],
+            i['INSPECTOR_NAME'], i['ACTION_DETAILS'], i['REPAIR_COST'], i['NEXT_INSP_DATE']
+        ])
+
+    # 4. 시트 4: IoT 센서 로그 (최근 1,000건)
+    ws_sensor = wb.create_sheet(title="IoT 센서계측")
+    sensor_headers = ['로그No', '시설물코드', '센서종류', '계측수치', '단위', '상태플래그', '계측일시']
+    ws_sensor.append(sensor_headers)
+    for s in sensor_logs[:1000]:
+        ws_sensor.append([
+            s['LOG_ID'], s['FAC_ID'], s['SENSOR_TYPE'], s['METRIC_VAL'], s['UNIT'],
+            s['STATUS_FLAG'], s['LOGGED_AT']
+        ])
+
+    # 모든 시트 헤더 서식 및 열 너비 자동 조정
+    for ws in [ws_fac, ws_cmp, ws_insp, ws_sensor]:
+        for cell in ws[1]:
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+        
+        # 행 높이 설정
+        ws.row_dimensions[1].height = 26
+        
+        for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=1, max_col=ws.max_column):
+            for cell in row:
+                cell.font = data_font
+                cell.border = thin_border
+                if isinstance(cell.value, (int, float)):
+                    cell.alignment = Alignment(horizontal='right', vertical='center')
+                else:
+                    cell.alignment = Alignment(vertical='center')
+
+        # 열 자동 너비
+        for col in ws.columns:
+            max_len = max(len(str(cell.value or '')) for cell in col)
+            col_letter = get_column_letter(col[0].column)
+            ws.column_dimensions[col_letter].width = min(max(max_len + 3, 12), 45)
+
+    wb.save(excel_path)
+    print(f"[+] 날짜별 엑셀(Excel) 리포트 저장 완료: {excel_path}")
+    return excel_path
+
+# -------------------------------------------------------------
+# 파일 덤프 함수 (SQL 및 Mock JSON)
 # -------------------------------------------------------------
 def export_to_sql_file(filepath, facilities, inspections, complaints, sensor_logs):
-    """Oracle SQL INSERT 문 생성 (COMMIT 주기 포함하여 롤백세그먼트 부하 방지)"""
-    print(f"[*] 오라클 SQL 파일 내보내기 시작: {filepath}")
     with open(filepath, 'w', encoding='utf-8') as f:
-        f.write("-- 스마트시티 대용량 가상 더미 데이터 INSERT 스크립트\n")
-        f.write("SET DEFINE OFF;\n\n")
-
-        # 1. 시설물
+        f.write("-- 스마트시티 대용량 가상 더미 데이터 INSERT 스크립트\nSET DEFINE OFF;\n\n")
         f.write("-- [1] TB_FACILITY\n")
         for fac in facilities:
             f.write(
@@ -239,80 +307,49 @@ def export_to_sql_file(filepath, facilities, inspections, complaints, sensor_log
                 f"VALUES ('{fac['FAC_ID']}', '{fac['FAC_NAME']}', '{fac['FAC_TYPE']}', '{fac['DISTRICT']}', '{fac['LOCATION_ADDR']}', {fac['LATITUDE']}, {fac['LONGITUDE']}, "
                 f"TO_DATE('{fac['INSTALL_DATE']}', 'YYYY-MM-DD'), '{fac['OP_STATUS']}', '{fac['MANAGE_DEPT']}', '{fac['MANAGER_NAME']}', '{fac['MANAGER_PHONE']}', TO_DATE('{fac['LAST_INSP_DATE']}', 'YYYY-MM-DD'), '{fac['REMARKS']}');\n"
             )
-        f.write("COMMIT;\n\n")
-
-        # 2. 시설물 점검
-        f.write("-- [2] TB_FACILITY_INSP\n")
+        f.write("COMMIT;\n\n-- [2] TB_FACILITY_INSP\n")
         for idx, insp in enumerate(inspections, 1):
             f.write(
                 f"INSERT INTO TB_FACILITY_INSP (INSP_ID, FAC_ID, INSP_DATE, INSP_TYPE, INSP_STATUS, INSPECTOR_NAME, ACTION_DETAILS, REPAIR_COST, NEXT_INSP_DATE) "
                 f"VALUES ('{insp['INSP_ID']}', '{insp['FAC_ID']}', TO_DATE('{insp['INSP_DATE']}', 'YYYY-MM-DD'), '{insp['INSP_TYPE']}', '{insp['INSP_STATUS']}', "
                 f"'{insp['INSPECTOR_NAME']}', '{insp['ACTION_DETAILS']}', {insp['REPAIR_COST']}, TO_DATE('{insp['NEXT_INSP_DATE']}', 'YYYY-MM-DD'));\n"
             )
-            if idx % 500 == 0:
-                f.write("COMMIT;\n")
-        f.write("COMMIT;\n\n")
-
-        # 3. 민원
-        f.write("-- [3] TB_CIVIL_COMPLAINT\n")
+            if idx % 500 == 0: f.write("COMMIT;\n")
+        f.write("COMMIT;\n\n-- [3] TB_CIVIL_COMPLAINT\n")
         for idx, cmp in enumerate(complaints, 1):
             fac_str = f"'{cmp['RELATED_FAC_ID']}'" if cmp['RELATED_FAC_ID'] else "NULL"
             res_date_str = f"TO_DATE('{cmp['RESOLVE_DATE']}', 'YYYY-MM-DD HH24:MI:SS')" if cmp['RESOLVE_DATE'] else "NULL"
             res_comm_str = f"'{cmp['RESOLVE_COMMENT']}'" if cmp['RESOLVE_COMMENT'] else "NULL"
             sat_str = str(cmp['SATISFACTION']) if cmp['SATISFACTION'] else "NULL"
             handler_str = f"'{cmp['HANDLER_NAME']}'" if cmp['HANDLER_NAME'] else "NULL"
-
-            # SQL 인젝션 및 특수문자 따옴표 치환
             safe_title = cmp['TITLE'].replace("'", "''")
             safe_content = cmp['CONTENT'].replace("'", "''")
-
             f.write(
                 f"INSERT INTO TB_CIVIL_COMPLAINT (COMPLAINT_ID, TITLE, CATEGORY, CONTENT, PETITIONER_NAME, PETITIONER_TEL, OCCUR_ADDRESS, DISTRICT, RELATED_FAC_ID, REG_DATE, STATUS, ASSIGNED_DEPT, HANDLER_NAME, RESOLVE_DATE, RESOLVE_COMMENT, SATISFACTION) "
                 f"VALUES ('{cmp['COMPLAINT_ID']}', '{safe_title}', '{cmp['CATEGORY']}', '{safe_content}', '{cmp['PETITIONER_NAME']}', '{cmp['PETITIONER_TEL']}', "
                 f"'{cmp['OCCUR_ADDRESS']}', '{cmp['DISTRICT']}', {fac_str}, TO_DATE('{cmp['REG_DATE']}', 'YYYY-MM-DD HH24:MI:SS'), '{cmp['STATUS']}', '{cmp['ASSIGNED_DEPT']}', "
                 f"{handler_str}, {res_date_str}, {res_comm_str}, {sat_str});\n"
             )
-            if idx % 500 == 0:
-                f.write("COMMIT;\n")
-        f.write("COMMIT;\n\n")
-
-        # 4. 센서 로그
-        f.write("-- [4] TB_IOT_SENSOR_LOG\n")
+            if idx % 500 == 0: f.write("COMMIT;\n")
+        f.write("COMMIT;\n\n-- [4] TB_IOT_SENSOR_LOG\n")
         for idx, log in enumerate(sensor_logs, 1):
             f.write(
                 f"INSERT INTO TB_IOT_SENSOR_LOG (LOG_ID, FAC_ID, SENSOR_TYPE, METRIC_VAL, UNIT, STATUS_FLAG, LOGGED_AT) "
                 f"VALUES ({log['LOG_ID']}, '{log['FAC_ID']}', '{log['SENSOR_TYPE']}', {log['METRIC_VAL']}, '{log['UNIT']}', '{log['STATUS_FLAG']}', TO_TIMESTAMP('{log['LOGGED_AT']}', 'YYYY-MM-DD HH24:MI:SS'));\n"
             )
-            if idx % 1000 == 0:
-                f.write("COMMIT;\n")
+            if idx % 1000 == 0: f.write("COMMIT;\n")
         f.write("COMMIT;\n")
 
-    print(f"[+] SQL 파일 저장 완료! ({os.path.getsize(filepath) / 1024:.1f} KB)")
-
-# -------------------------------------------------------------
-# JSON Mock 파일 저장 함수 (GitHub Pages & 데모용)
-# -------------------------------------------------------------
 def export_to_json_mocks(output_dir, facilities, complaints, inspections, sensor_logs):
-    """웹 브라우저 및 GitHub Pages에서 바로 불러올 수 있는 정적 JSON Mock 데이터 생성"""
     os.makedirs(output_dir, exist_ok=True)
-    
-    # 1. 시설물
     with open(os.path.join(output_dir, 'facilities.json'), 'w', encoding='utf-8') as f:
         json.dump(facilities, f, ensure_ascii=False, indent=2)
-        
-    # 2. 최근 민원 (웹 표시용 상위 500건)
     with open(os.path.join(output_dir, 'complaints.json'), 'w', encoding='utf-8') as f:
         json.dump(complaints[:500], f, ensure_ascii=False, indent=2)
-
-    # 3. 점검 이력
     with open(os.path.join(output_dir, 'inspections.json'), 'w', encoding='utf-8') as f:
         json.dump(inspections[:300], f, ensure_ascii=False, indent=2)
-
-    # 4. 실시간 센서 로그
     with open(os.path.join(output_dir, 'sensor_logs.json'), 'w', encoding='utf-8') as f:
         json.dump(sensor_logs[:1000], f, ensure_ascii=False, indent=2)
-
-    # 5. 대시보드 종합 통계 요약 데이터
     kpi_summary = {
         'totalFacilities': len(facilities),
         'normalFacilities': sum(1 for x in facilities if x['OP_STATUS'] == 'NORMAL'),
@@ -329,51 +366,33 @@ def export_to_json_mocks(output_dir, facilities, complaints, inspections, sensor
     with open(os.path.join(output_dir, 'summary_kpi.json'), 'w', encoding='utf-8') as f:
         json.dump(kpi_summary, f, ensure_ascii=False, indent=2)
 
-    print(f"[+] 웹 데모용 Mock JSON 파일 저장 완료: {output_dir}")
-
-# -------------------------------------------------------------
-# 메인 실행부
-# -------------------------------------------------------------
 def main():
-    parser = argparse.ArgumentParser(description="스마트시티 가상 대용량 데이터 생성기")
-    parser.add_argument('--facilities', type=int, default=150, help='시설물 수 (기본: 150)')
-    parser.add_argument('--inspections', type=int, default=500, help='점검 이력 수 (기본: 500)')
-    parser.add_argument('--complaints', type=int, default=2500, help='민원 건수 (기본: 2500)')
-    parser.add_argument('--sensors', type=int, default=8000, help='IoT 센서 로그 건수 (기본: 8000)')
-    parser.add_argument('--sql-file', type=str, default='db/dummy_data_insert.sql', help='출력 SQL 파일 경로')
-    parser.add_argument('--mock-dir', type=str, default='web_portal/mock_data', help='웹 Mock 데이터 디렉토리')
-
+    parser = argparse.ArgumentParser(description="스마트시티 가상 대용량 데이터 & 엑셀 자동 관리기")
+    parser.add_argument('--facilities', type=int, default=150)
+    parser.add_argument('--inspections', type=int, default=500)
+    parser.add_argument('--complaints', type=int, default=2500)
+    parser.add_argument('--sensors', type=int, default=5000)
+    parser.add_argument('--sql-file', type=str, default='db/dummy_data_insert.sql')
+    parser.add_argument('--mock-dir', type=str, default='web_portal/mock_data')
+    parser.add_argument('--excel-dir', type=str, default='db/excel_logs')
     args = parser.parse_args()
 
     print("==========================================================")
-    print(" SmartCity Management System - Dummy Data Generator")
+    print(" [SmartCity] Dummy Data Generator & Excel Manager")
     print("==========================================================")
-    print(f" 생성 설정:")
-    print(f"  - 공공 시설물 마스터: {args.facilities:,} 건")
-    print(f"  - 시설물 점검 기록: {args.inspections:,} 건")
-    print(f"  - 시민 통합 민원 내역: {args.complaints:,} 건")
-    print(f"  - IoT 센서 텔레메트리 로그: {args.sensors:,} 건")
-    print("----------------------------------------------------------")
-
-    # 1. 데이터 생성
-    print("[1/4] 스마트시티 시설물 데이터 생성 중...")
     fac_data = generate_facilities(args.facilities)
-
-    print("[2/4] 시설물 점검 및 유지보수 이력 생성 중...")
     insp_data = generate_inspections(fac_data, args.inspections)
-
-    print("[3/4] 시민 통합 민원 데이터 생성 중...")
     cmp_data = generate_complaints(fac_data, args.complaints)
-
-    print("[4/4] IoT 센서 실시간 로그 생성 중...")
     sensor_data = generate_sensor_logs(fac_data, args.sensors)
 
-    # 2. 파일 저장
+    # 1. 엑셀 날짜별 리포트 생성
+    export_to_excel_report(args.excel_dir, fac_data, cmp_data, insp_data, sensor_data)
+
+    # 2. SQL 파일 및 Web Mock 갱신
     export_to_sql_file(args.sql_file, fac_data, insp_data, cmp_data, sensor_data)
     export_to_json_mocks(args.mock_dir, fac_data, cmp_data, insp_data, sensor_data)
-
     print("==========================================================")
-    print(" [성공] 모든 대용량 가상 데이터 생성이 완료되었습니다.")
+    print(" [성공] 대량 데이터 공급 및 엑셀 기록이 완료되었습니다.")
     print("==========================================================")
 
 if __name__ == '__main__':
