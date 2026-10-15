@@ -1,4 +1,4 @@
-# 🏛️ 스마트시티 공공시설 & 시민 민원 통합관제 시스템
+# 스마트시티 공공시설 & 시민 민원 통합관제 시스템
 > **eGovFrame 4.x(전자정부프레임워크) & Nexacro N & Oracle DB & GitHub Actions 자동 배포**
 
 [![Deploy to GitHub Pages](https://github.com/srunaic/Integrated_learning_materials/actions/workflows/deploy.yml/badge.svg)](https://github.com/srunaic/Integrated_learning_materials/actions/workflows/deploy.yml)
