@@ -1,74 +1,73 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <FDL version="2.1">
-  <Form id="MainDashboard" width="1680" height="960" titletext="스마트시티 통합관제 종합상황판" onload="MainDashboard_onload" background="#0a0f1d">
+  <Form id="MainDashboard" width="1680" height="960" titletext="스마트시티 공공시설 및 시민 민원 통합관제 포털" onload="MainDashboard_onload" background="#f1f5f9">
     <Layouts>
       <Layout width="1680" height="960">
         <!-- 1. 최상단 관제센터 헤더 바 -->
-        <Div id="div_header" left="20" top="15" right="20" height="65" background="#111827" border="1px solid #1e293b" borderRadius="8px" text="">
+        <Div id="div_header" left="20" top="15" right="20" height="65" background="#ffffff" border="1px solid #cbd5e1" borderRadius="6px" text="">
           <Layouts>
             <Layout>
-              <Static id="st_icon" text="🏛️" left="15" top="12" width="40" height="40" font="24px/normal 'Segoe UI Emoji'" textAlign="center" onclick="div_header_st_icon_onclick"/>
-              <Static id="st_main_title" text="스마트시티 공공시설 &amp; 시민 민원 통합관제 종합상황판" left="65" top="12" width="600" height="24" font="bold 18px 'Pretendard', 'Malgun Gothic'" color="#ffffff"/>
-              <Static id="st_sub_title" text="SmartCity Integrated Public Facility &amp; Civil Complaint Command Center" left="65" top="36" width="600" height="18" font="11px 'Pretendard'" color="#64748b"/>
-              <!-- 실시간 상태 인디케이터 -->
-              <Static id="st_dot" text="●" left="1320" top="22" width="20" height="20" color="#10b981" font="bold 16px 'Arial'"/>
-              <Static id="st_network" text="통합관제망 정상 가동 중" left="1340" top="23" width="160" height="20" font="12px 'Pretendard'" color="#94a3b8"/>
-              <Static id="st_clock" text="2026-10-15 23:00:00" right="20" top="20" width="160" height="26" font="bold 13px 'Courier New'" color="#00d2ff" textAlign="center" background="#0f172a" border="1px solid #334155" borderRadius="4px"/>
+              <Static id="st_icon" text="🏢" left="15" top="12" width="40" height="40" font="24px/normal 'Segoe UI Emoji'" textAlign="center"/>
+              <Static id="st_main_title" text="스마트시티 공공시설 및 시민 민원 통합관제 포털" left="65" top="12" width="600" height="24" font="bold 18px 'Pretendard', 'Malgun Gothic'" color="#0f172a"/>
+              <Static id="st_sub_title" text="eGovFrame 4.x • Nexacro UI/UX • Oracle Enterprise DB" left="65" top="36" width="600" height="18" font="bold 12px 'Pretendard'" color="#475569"/>
+              <!-- 실시간 시계 -->
+              <Static id="st_clock" text="2026. 10. 16. (금) 오전 12:22:54" right="20" top="18" width="260" height="28" font="bold 14px 'Pretendard', 'Malgun Gothic'" color="#0f172a" textAlign="right"/>
             </Layout>
           </Layouts>
         </Div>
-        <!-- 2. 상단 핵심 4대 KPI 요약 카드 (글래스모피즘 & 네온 테두리) -->
+
+        <!-- 2. 상단 핵심 4대 KPI 요약 카드 -->
         <!-- KPI 1: 총 등록 시설물 -->
-        <Div id="kpi_fac" left="20" top="95" width="395" height="110" background="#131c2e" border="1px solid #00d2ff" borderRadius="10px">
+        <Div id="kpi_fac" left="20" top="95" width="395" height="95" background="#ffffff" border="1px solid #cbd5e1" borderRadius="6px">
           <Layouts>
             <Layout>
-              <Static id="st_k1_lbl" text="총 등록 공공시설물" left="20" top="15" width="200" height="20" font="13px 'Pretendard'" color="#94a3b8"/>
-              <Static id="st_k1_icon" text="🏢" right="20" top="15" width="30" height="30" font="20px/normal 'Segoe UI Emoji'" textAlign="center"/>
-              <Static id="st_k1_val" text="150" left="20" top="42" width="120" height="40" font="bold 30px 'Pretendard'" color="#ffffff"/>
-              <Static id="st_k1_unit" text="개소" left="145" top="55" width="40" height="20" font="13px 'Pretendard'" color="#64748b"/>
-              <Static id="st_k1_sub" text="● 가로등, CCTV, 스마트쉘터, 급속충전기" left="20" top="85" width="300" height="16" font="11px 'Pretendard'" color="#00d2ff"/>
+              <Static id="st_k1_icon" text="🏢" left="20" top="20" width="45" height="45" font="32px/normal 'Segoe UI Emoji'" textAlign="center"/>
+              <Static id="st_k1_lbl" text="총 등록 공공시설물" left="80" top="20" width="180" height="18" font="bold 12px 'Pretendard'" color="#64748b"/>
+              <Static id="st_k1_val" text="150" left="80" top="42" width="90" height="36" font="800 24px 'Pretendard'" color="#0f172a"/>
+              <Static id="st_k1_unit" text="개소" left="175" top="50" width="40" height="20" font="12px 'Pretendard'" color="#64748b"/>
             </Layout>
           </Layouts>
         </Div>
-        <!-- KPI 2: 정상 가동률 -->
-        <Div id="kpi_rate" left="435" top="96" width="395" height="110" background="#131c2e" border="1px solid #10b981" borderRadius="10px">
+
+        <!-- KPI 2: 정상 가동 시설물 -->
+        <Div id="kpi_rate" left="435" top="95" width="395" height="95" background="#ffffff" border="1px solid #cbd5e1" borderRadius="6px">
           <Layouts>
             <Layout>
-              <Static id="st_k2_lbl" text="시설물 실시간 정상 가동률" left="20" top="15" width="200" height="20" font="13px 'Pretendard'" color="#94a3b8"/>
-              <Static id="st_k2_icon" text="⚡" right="20" top="15" width="30" height="30" font="20px/normal 'Segoe UI Emoji'" textAlign="center"/>
-              <Static id="st_k2_val" text="94.2" left="20" top="42" width="100" height="40" font="bold 30px 'Pretendard'" color="#10b981"/>
-              <Static id="st_k2_unit" text="%" left="125" top="55" width="30" height="20" font="13px 'Pretendard'" color="#64748b"/>
-              <Static id="st_k2_sub" text="▲ 전일 대비 +0.8% 안정 운영 중" left="20" top="85" width="300" height="16" font="11px 'Pretendard'" color="#10b981"/>
+              <Static id="st_k2_icon" text="⚡" left="20" top="20" width="45" height="45" font="32px/normal 'Segoe UI Emoji'" textAlign="center"/>
+              <Static id="st_k2_lbl" text="정상 가동 시설물" left="80" top="20" width="180" height="18" font="bold 12px 'Pretendard'" color="#64748b"/>
+              <Static id="st_k2_val" text="124" left="80" top="42" width="60" height="36" font="800 24px 'Pretendard'" color="#0f172a"/>
+              <Static id="st_k2_unit" text="개동 (94.2%)" left="145" top="50" width="100" height="20" font="12px 'Pretendard'" color="#64748b"/>
             </Layout>
           </Layouts>
         </Div>
+
         <!-- KPI 3: 누적 민원 -->
-        <Div id="kpi_cmp" left="850" top="95" width="395" height="110" background="#131c2e" border="1px solid #3b82f6" borderRadius="10px">
+        <Div id="kpi_cmp" left="850" top="95" width="395" height="95" background="#ffffff" border="1px solid #cbd5e1" borderRadius="6px">
           <Layouts>
             <Layout>
-              <Static id="st_k3_lbl" text="시민 누적 접수 민원" left="20" top="15" width="200" height="20" font="13px 'Pretendard'" color="#94a3b8"/>
-              <Static id="st_k3_icon" text="📢" right="20" top="15" width="30" height="30" font="20px/normal 'Segoe UI Emoji'" textAlign="center"/>
-              <Static id="st_k3_val" text="2,500" left="20" top="42" width="130" height="40" font="bold 30px 'Pretendard'" color="#ffffff"/>
-              <Static id="st_k3_unit" text="건" left="155" top="55" width="30" height="20" font="13px 'Pretendard'" color="#64748b"/>
-              <Static id="st_k3_sub" text="처리완료율 72.4% (평균 1.8일 소요)" left="20" top="85" width="300" height="16" font="11px 'Pretendard'" color="#38bdf8"/>
+              <Static id="st_k3_icon" text="📢" left="20" top="20" width="45" height="45" font="32px/normal 'Segoe UI Emoji'" textAlign="center"/>
+              <Static id="st_k3_lbl" text="시민 누적 접수 민원" left="80" top="20" width="180" height="18" font="bold 12px 'Pretendard'" color="#64748b"/>
+              <Static id="st_k3_val" text="2,500" left="80" top="42" width="90" height="36" font="800 24px 'Pretendard'" color="#0f172a"/>
+              <Static id="st_k3_unit" text="건" left="175" top="50" width="30" height="20" font="12px 'Pretendard'" color="#64748b"/>
             </Layout>
           </Layouts>
         </Div>
-        <!-- KPI 4: 긴급 점검 필요 -->
-        <Div id="kpi_alert" left="1265" top="95" right="20" height="110" background="#131c2e" border="1px solid #ef4444" borderRadius="10px">
+
+        <!-- KPI 4: 민원 조치 및 해결 완료 -->
+        <Div id="kpi_alert" left="1265" top="95" right="20" height="95" background="#ffffff" border="1px solid #cbd5e1" borderRadius="6px">
           <Layouts>
             <Layout>
-              <Static id="st_k4_lbl" text="현장 긴급 출동/점검 필요" left="20" top="15" width="200" height="20" font="13px 'Pretendard'" color="#f87171"/>
-              <Static id="st_k4_icon" text="🚨" right="20" top="15" width="30" height="30" font="20px/normal 'Segoe UI Emoji'" textAlign="center"/>
-              <Static id="st_k4_val" text="12" left="20" top="42" width="70" height="40" font="bold 30px 'Pretendard'" color="#ef4444"/>
-              <Static id="st_k4_unit" text="건" left="95" top="55" width="30" height="20" font="13px 'Pretendard'" color="#64748b"/>
-              <Static id="st_k4_sub" text="포트홀, 배수펌프 수위 이상 등" left="20" top="85" width="250" height="16" font="11px 'Pretendard'" color="#f87171"/>
+              <Static id="st_k4_icon" text="🛡️" left="20" top="20" width="45" height="45" font="32px/normal 'Segoe UI Emoji'" textAlign="center"/>
+              <Static id="st_k4_lbl" text="민원 조치 및 해결 완료" left="80" top="20" width="180" height="18" font="bold 12px 'Pretendard'" color="#64748b"/>
+              <Static id="st_k4_val" text="875" left="80" top="42" width="70" height="36" font="800 24px 'Pretendard'" color="#0f172a"/>
+              <Static id="st_k4_unit" text="건" left="155" top="50" width="30" height="20" font="12px 'Pretendard'" color="#64748b"/>
             </Layout>
           </Layouts>
         </Div>
-        <!-- 3. 좌측 영역: 구역별 시설물 및 운영 현황 그리드 -->
-        <Static id="st_title_left" text="🏢 관할 자치구별 공공시설물 가동 상태" left="20" top="220" width="350" height="25" font="bold 15px 'Pretendard'" color="#00d2ff"/>
-        <Grid id="grd_fac_status" left="20" top="250" width="810" height="380" binddataset="ds_facilities" autofittype="col" background="#111827" border="1px solid #1e293b">
+
+        <!-- 3. 좌측 영역: 공공 시설물 자산 마스터 그리드 -->
+        <Static id="st_tab_left" text="시설물 자산 &amp; 점검 이력" left="20" top="205" width="200" height="30" background="#1e3a5f" color="#ffffff" font="bold 12px 'Pretendard'" textAlign="center" borderRadius="4px 4px 0px 0px"/>
+        <Grid id="grd_fac_status" left="20" top="235" width="810" height="360" binddataset="ds_facilities" autofittype="col" background="#ffffff" border="1px solid #cbd5e1">
           <Formats>
             <Format id="default">
               <Columns>
@@ -80,31 +79,32 @@
                 <Column size="110"/>
               </Columns>
               <Rows>
-                <Row size="34" band="head"/>
+                <Row size="32" band="head"/>
                 <Row size="28"/>
               </Rows>
               <Band id="head">
-                <Cell text="시설코드" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
-                <Cell col="1" text="시설명" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
-                <Cell col="2" text="유형" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
-                <Cell col="3" text="구역" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
-                <Cell col="4" text="가동상태" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
-                <Cell col="5" text="관리부서" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                <Cell text="시설코드" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="1" text="시설명" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="2" text="유형" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="3" text="구역" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="4" text="가동상태" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="5" text="관리부서" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
               </Band>
               <Band id="body">
-                <Cell text="bind:FAC_ID" textAlign="center" color="#94a3b8" font="11px 'Courier New'"/>
-                <Cell col="1" text="bind:FAC_NAME" textAlign="left" color="#ffffff" font="12px 'Pretendard'"/>
-                <Cell col="2" text="bind:FAC_TYPE" textAlign="center" color="#38bdf8" font="11px 'Pretendard'"/>
-                <Cell col="3" text="bind:DISTRICT" textAlign="center" color="#cbd5e1" font="11px 'Pretendard'"/>
-                <Cell col="4" text="bind:OP_STATUS" textAlign="center" font="bold 11px 'Pretendard'"/>
-                <Cell col="5" text="bind:MANAGE_DEPT" textAlign="center" color="#94a3b8" font="11px 'Pretendard'"/>
+                <Cell text="bind:FAC_ID" textAlign="center" color="#334155" font="11px 'Courier New'"/>
+                <Cell col="1" text="bind:FAC_NAME" textAlign="left" color="#0f172a" font="bold 12px 'Pretendard'"/>
+                <Cell col="2" text="bind:FAC_TYPE" textAlign="center" color="#0284c7" font="11px 'Pretendard'"/>
+                <Cell col="3" text="bind:DISTRICT" textAlign="center" color="#334155" font="11px 'Pretendard'"/>
+                <Cell col="4" text="bind:OP_STATUS" textAlign="center" font="bold 11px 'Pretendard'" color="expr:OP_STATUS=='NORMAL'?'#16a34a':'#ea580c'"/>
+                <Cell col="5" text="bind:MANAGE_DEPT" textAlign="center" color="#64748b" font="11px 'Pretendard'"/>
               </Band>
             </Format>
           </Formats>
         </Grid>
-        <!-- 4. 우측 영역: 실시간 시민 긴급 민원 관제 그리드 -->
-        <Static id="st_title_right" text="📢 실시간 시민 접수 민원 관제 (최근 접수순)" left="850" top="220" width="350" height="25" font="bold 15px 'Pretendard'" color="#00d2ff"/>
-        <Grid id="grd_complaints" left="850" top="250" right="20" height="380" binddataset="ds_complaints" autofittype="col" background="#111827" border="1px solid #1e293b">
+
+        <!-- 4. 우측 영역: 넥사크로 시민 민원 관리 그리드 -->
+        <Static id="st_tab_right" text="넥사크로 시민 민원 관리" left="850" top="205" width="200" height="30" background="#1e3a5f" color="#ffffff" font="bold 12px 'Pretendard'" textAlign="center" borderRadius="4px 4px 0px 0px"/>
+        <Grid id="grd_complaints" left="850" top="235" right="20" height="360" binddataset="ds_complaints" autofittype="col" background="#ffffff" border="1px solid #cbd5e1">
           <Formats>
             <Format id="default">
               <Columns>
@@ -116,31 +116,32 @@
                 <Column size="80"/>
               </Columns>
               <Rows>
-                <Row size="34" band="head"/>
+                <Row size="32" band="head"/>
                 <Row size="28"/>
               </Rows>
               <Band id="head">
-                <Cell text="접수번호" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
-                <Cell col="1" text="분류" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
-                <Cell col="2" text="민원 제목" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
-                <Cell col="3" text="자치구" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
-                <Cell col="4" text="민원인" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
-                <Cell col="5" text="처리상태" background="#1e293b" color="#cbd5e1" font="bold 12px 'Pretendard'"/>
+                <Cell text="접수번호" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="1" text="분류" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="2" text="민원 제목" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="3" text="자치구" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="4" text="민원인" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="5" text="처리상태" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
               </Band>
               <Band id="body">
-                <Cell text="bind:COMPLAINT_ID" textAlign="center" color="#94a3b8" font="11px 'Courier New'"/>
-                <Cell col="1" text="bind:CATEGORY" textAlign="center" color="#00d2ff" font="11px 'Pretendard'"/>
-                <Cell col="2" text="bind:TITLE" textAlign="left" color="#ffffff" font="12px 'Pretendard'"/>
-                <Cell col="3" text="bind:DISTRICT" textAlign="center" color="#cbd5e1" font="11px 'Pretendard'"/>
-                <Cell col="4" text="bind:PETITIONER_NAME" textAlign="center" color="#94a3b8" font="11px 'Pretendard'"/>
-                <Cell col="5" text="bind:STATUS" textAlign="center" font="bold 11px 'Pretendard'"/>
+                <Cell text="bind:COMPLAINT_ID" textAlign="center" color="#334155" font="bold 11px 'Courier New'"/>
+                <Cell col="1" text="bind:CATEGORY" textAlign="center" color="#0284c7" font="11px 'Pretendard'"/>
+                <Cell col="2" text="bind:TITLE" textAlign="left" color="#0f172a" font="12px 'Pretendard'"/>
+                <Cell col="3" text="bind:DISTRICT" textAlign="center" color="#334155" font="11px 'Pretendard'"/>
+                <Cell col="4" text="bind:PETITIONER_NAME" textAlign="center" color="#64748b" font="11px 'Pretendard'"/>
+                <Cell col="5" text="bind:STATUS" textAlign="center" font="bold 11px 'Pretendard'" color="#0d9488"/>
               </Band>
             </Format>
           </Formats>
         </Grid>
-        <!-- 5. 하단 영역: 실시간 스마트시티 IoT 센서 텔레메트리 (Time-Series) -->
-        <Static id="st_title_bottom" text="📡 도심 IoT 환경 및 시설물 센서 실시간 텔레메트리" left="20" top="645" width="450" height="25" font="bold 15px 'Pretendard'" color="#00d2ff"/>
-        <Grid id="grd_sensor" left="20" top="700" right="20" bottom="-5" binddataset="ds_sensors" autofittype="col" background="#111827" border="1px solid #1e293b">
+
+        <!-- 5. 하단 영역: IoT 센서 텔레메트리 -->
+        <Static id="st_tab_bottom" text="IoT 센서 텔레메트리" left="20" top="610" width="200" height="30" background="#1e3a5f" color="#ffffff" font="bold 12px 'Pretendard'" textAlign="center" borderRadius="4px 4px 0px 0px"/>
+        <Grid id="grd_sensor" left="20" top="640" right="20" bottom="35" binddataset="ds_sensors" autofittype="col" background="#ffffff" border="1px solid #cbd5e1">
           <Formats>
             <Format id="default">
               <Columns>
@@ -153,29 +154,33 @@
               </Columns>
               <Rows>
                 <Row size="32" band="head"/>
-                <Row size="26"/>
+                <Row size="28"/>
               </Rows>
               <Band id="head">
-                <Cell text="No" background="#1e293b" color="#cbd5e1"/>
-                <Cell col="1" text="대상 시설물 코드" background="#1e293b" color="#cbd5e1"/>
-                <Cell col="2" text="계측 센서 종류" background="#1e293b" color="#cbd5e1"/>
-                <Cell col="3" text="실시간 계측값" background="#1e293b" color="#cbd5e1"/>
-                <Cell col="4" text="이상 여부" background="#1e293b" color="#cbd5e1"/>
-                <Cell col="5" text="계측 일시" background="#1e293b" color="#cbd5e1"/>
+                <Cell text="No" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="1" text="대상 시설물 코드" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="2" text="계측 센서 종류" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="3" text="실시간 계측값" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="4" text="이상 여부" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
+                <Cell col="5" text="계측 일시" background="#f1f5f9" color="#334155" font="bold 12px 'Pretendard'"/>
               </Band>
               <Band id="body">
                 <Cell text="bind:LOG_ID" textAlign="center" color="#64748b"/>
-                <Cell col="1" text="bind:FAC_ID" textAlign="center" color="#38bdf8"/>
-                <Cell col="2" text="bind:SENSOR_TYPE" textAlign="center" color="#a78bfa"/>
-                <Cell col="3" text="expr:METRIC_VAL + ' ' + UNIT" textAlign="right" color="#00d2ff" font="bold 11px 'Courier New'"/>
-                <Cell col="4" text="bind:STATUS_FLAG" textAlign="center" font="bold 11px 'Pretendard'"/>
-                <Cell col="5" text="bind:LOGGED_AT" textAlign="center" color="#94a3b8"/>
+                <Cell col="1" text="bind:FAC_ID" textAlign="center" color="#0284c7" font="bold 11px 'Courier New'"/>
+                <Cell col="2" text="bind:SENSOR_TYPE" textAlign="center" color="#334155"/>
+                <Cell col="3" text="expr:METRIC_VAL + ' ' + UNIT" textAlign="right" color="#0f172a" font="bold 11px 'Courier New'"/>
+                <Cell col="4" text="bind:STATUS_FLAG" textAlign="center" font="bold 11px 'Pretendard'" color="expr:STATUS_FLAG=='OK'?'#16a34a':'#ea580c'"/>
+                <Cell col="5" text="bind:LOGGED_AT" textAlign="center" color="#64748b"/>
               </Band>
             </Format>
           </Formats>
         </Grid>
+
+        <!-- 푸터 -->
+        <Static id="st_footer" text="eGovFrame 4.x • Nexacro UI/UX • Oracle Enterprise DB" right="20" bottom="8" width="400" height="20" font="bold 11px 'Pretendard'" color="#475569" textAlign="right"/>
       </Layout>
     </Layouts>
+
     <!-- 데이터셋 정의 -->
     <Objects>
       <Dataset id="ds_facilities">
@@ -210,6 +215,7 @@
         </ColumnInfo>
       </Dataset>
     </Objects>
+
     <!-- 스크립트 -->
     <Script type="xscript5.1"><![CDATA[
 this.MainDashboard_onload = function(obj, e) {
@@ -218,7 +224,6 @@ this.MainDashboard_onload = function(obj, e) {
 };
 
 this.fn_loadDashboardData = function() {
-    // 전자정부프레임워크 백엔드 트랜잭션 호출
     this.transaction("getFacilities", "svc_backend::facilities", "", "ds_facilities=ds_facilities", "", "fn_callback");
     this.transaction("getComplaints", "svc_backend::complaints?page=1&pageSize=15", "", "ds_complaints=ds_complaints", "", "fn_callback");
 };
@@ -227,11 +232,6 @@ this.fn_callback = function(svcId, errCode, errMsg) {
     if (errCode < 0) {
         trace("[WARN] 백엔드 오프라인 - 데모 모드 작동: " + errMsg);
     }
-};
-
-this.div_header_st_icon_onclick = function(obj:nexacro.Static,e:nexacro.ClickEventInfo)
-{
-	
 };
 ]]></Script>
   </Form>
