@@ -149,4 +149,4 @@ gradle bootRun
 
 ### 3단계: 웹 관제 포털 확인
 - 브라우저에서 `web_portal/index.html`을 바로 열거나 Live Server를 실행합니다.
-- GitHub에 커밋 & 푸시하면 GitHub Actions에 의해 자동으로 GitHub Pages에 배포됩니다!
+- GitHub에 커밋 & 푸시하면 cloudflare 서버 에 의해 자동으로 배포됩니다!
