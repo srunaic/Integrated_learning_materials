@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Environment version="21.0.0.0">
+  <ScreenDefinition>
+    <Screen id="Desktop_screen" type="desktop" themeid="theme::smartcity_dark" windowtype="auto" width="1920" height="1080"/>
+  </ScreenDefinition>
+  <Variables/>
+  <Cookies/>
+  <HTTPHeader/>
+  <Services>
+    <Service id="svc_backend" type="JSP" url="http://localhost:8080/api/nexacro/"/>
+  </Services>
+</Environment>

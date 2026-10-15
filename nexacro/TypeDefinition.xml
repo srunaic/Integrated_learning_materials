@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TypeDefinition version="21.0.0.0">
+  <Modules>
+    <Module id="CompBase" url="nexacro17lib/component/CompBase.json"/>
+    <Module id="ComComp" url="nexacro17lib/component/ComComp.json"/>
+    <Module id="Grid" url="nexacro17lib/component/Grid.json"/>
+    <Module id="DeviceAPI" url="nexacro17lib/component/DeviceAPI.json"/>
+  </Modules>
+  <Components>
+    <Component id="Button" classname="nexacro.Button" type="JavaScript"/>
+    <Component id="Combo" classname="nexacro.Combo" type="JavaScript"/>
+    <Component id="Edit" classname="nexacro.Edit" type="JavaScript"/>
+    <Component id="MaskEdit" classname="nexacro.MaskEdit" type="JavaScript"/>
+    <Component id="TextArea" classname="nexacro.TextArea" type="JavaScript"/>
+    <Component id="Static" classname="nexacro.Static" type="JavaScript"/>
+    <Component id="Div" classname="nexacro.Div" type="JavaScript"/>
+    <Component id="PopupDiv" classname="nexacro.PopupDiv" type="JavaScript"/>
+    <Component id="Radio" classname="nexacro.Radio" type="JavaScript"/>
+    <Component id="CheckBox" classname="nexacro.CheckBox" type="JavaScript"/>
+    <Component id="Calendar" classname="nexacro.Calendar" type="JavaScript"/>
+    <Component id="Grid" classname="nexacro.Grid" type="JavaScript"/>
+    <Component id="Spin" classname="nexacro.Spin" type="JavaScript"/>
+    <Component id="Tab" classname="nexacro.Tab" type="JavaScript"/>
+  </Components>
+  <Services>
+    <Service id="theme" type="resource" url="./_resource_/_theme_/"/>
+    <Service id="form" type="form" url="./project/form/"/>
+  </Services>
+</TypeDefinition>

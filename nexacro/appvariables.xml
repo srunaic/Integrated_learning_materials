@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AppVariables version="2.0">
+  <Datasets>
+    <Dataset id="gds_userInfo">
+      <ColumnInfo>
+        <Column id="userId" type="STRING" size="50"/>
+        <Column id="userName" type="STRING" size="50"/>
+        <Column id="userDept" type="STRING" size="100"/>
+        <Column id="userRole" type="STRING" size="20"/>
+      </ColumnInfo>
+      <Rows>
+        <Row>
+          <Col id="userId">admin_ops</Col>
+          <Col id="userName">총괄관리자</Col>
+          <Col id="userDept">스마트도시관제센터</Col>
+          <Col id="userRole">ADMIN</Col>
+        </Row>
+      </Rows>
+    </Dataset>
+  </Datasets>
+  <Variables>
+    <Variable id="gv_serverUrl" initval="http://localhost:8080/api/nexacro/"/>
+  </Variables>
+</AppVariables>

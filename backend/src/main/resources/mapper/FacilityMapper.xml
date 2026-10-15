@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.smartcity.mapper.FacilityMapper">
+
+    <select id="selectFacilityList" parameterType="egovframework.smartcity.model.PageVO" resultType="egovframework.smartcity.model.FacilityVO">
+        /* egovframework.smartcity.mapper.FacilityMapper.selectFacilityList */
+        SELECT 
+            FAC_ID          AS facId,
+            FAC_NAME        AS facName,
+            FAC_TYPE        AS facType,
+            DISTRICT        AS district,
+            LOCATION_ADDR   AS locationAddr,
+            LATITUDE        AS latitude,
+            LONGITUDE       AS longitude,
+            TO_CHAR(INSTALL_DATE, 'YYYY-MM-DD') AS installDate,
+            OP_STATUS       AS opStatus,
+            MANAGE_DEPT     AS manageDept,
+            MANAGER_NAME    AS managerName,
+            MANAGER_PHONE   AS managerPhone,
+            TO_CHAR(LAST_INSP_DATE, 'YYYY-MM-DD') AS lastInspDate,
+            REMARKS         AS remarks
+        FROM TB_FACILITY
+        <where>
+            <if test="district != null and district != '' and district != 'ALL'">
+                AND DISTRICT = #{district}
+            </if>
+            <if test="facType != null and facType != '' and facType != 'ALL'">
+                AND FAC_TYPE = #{facType}
+            </if>
+            <if test="status != null and status != '' and status != 'ALL'">
+                AND OP_STATUS = #{status}
+            </if>
+        </where>
+        ORDER BY FAC_ID ASC
+    </select>
+
+    <select id="selectFacilityCount" parameterType="egovframework.smartcity.model.PageVO" resultType="int">
+        SELECT COUNT(1) FROM TB_FACILITY
+    </select>
+
+</mapper>

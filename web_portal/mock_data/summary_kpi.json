@@ -1,0 +1,24 @@
+{
+  "totalFacilities": 120,
+  "normalFacilities": 104,
+  "warningFacilities": 9,
+  "errorFacilities": 7,
+  "totalComplaints": 1500,
+  "resolvedComplaints": 508,
+  "inProgressComplaints": 375,
+  "receivedComplaints": 529,
+  "todayAlerts": 12,
+  "districts": [
+    "강남구",
+    "서초구",
+    "송파구",
+    "마포구",
+    "영등포구",
+    "종로구",
+    "중구",
+    "성동구",
+    "용산구",
+    "강동구"
+  ],
+  "updatedAt": "2026-10-15 22:12:06"
+}

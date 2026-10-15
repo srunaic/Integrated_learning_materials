@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FXML version="2.1">
+  <Form id="CivilComplaint" width="1600" height="900" titletext="시민 통합 민원 접수 및 처리 관리" onload="CivilComplaint_onload">
+    <Layouts>
+      <Layout width="1600" height="900">
+        <!-- 상단 타이틀 영역 -->
+        <Static id="st_title" text="시민 통합 민원 접수 및 처리 관리" left="20" top="15" width="400" height="30" cssclass="sta_WF_title01"/>
+        <Static id="st_subtitle" text="스마트시티 행정망 연계 실시간 민원 현황 및 단계별 처리 지원" left="20" top="45" width="500" height="20" cssclass="sta_WF_subTitle"/>
+
+        <!-- 검색 조건 패널 (Search Div) -->
+        <Div id="div_search" left="20" top="75" right="20" height="60" cssclass="div_WF_search">
+          <Layouts>
+            <Layout>
+              <Static id="st_dist" text="관할 자치구" left="15" top="15" width="80" height="30"/>
+              <Combo id="cmb_dist" left="100" top="15" width="140" height="30" innerdataset="ds_districts" codecolumn="CODE" datacolumn="NAME"/>
+              
+              <Static id="st_status" text="처리 상태" left="260" top="15" width="70" height="30"/>
+              <Combo id="cmb_status" left="335" top="15" width="130" height="30" innerdataset="ds_statusList" codecolumn="CODE" datacolumn="NAME"/>
+              
+              <Static id="st_keyword" text="민원 검색어" left="485" top="15" width="80" height="30"/>
+              <Edit id="edt_keyword" left="570" top="15" width="220" height="30" placeholder="제목/내용/민원인 검색"/>
+              
+              <Button id="btn_search" text="조회 (F8)" left="810" top="15" width="90" height="30" cssclass="btn_WF_search" onclick="fn_search"/>
+              <Button id="btn_reset" text="초기화" left="910" top="15" width="80" height="30" onclick="fn_reset"/>
+              <Button id="btn_excel" text="엑셀 다운로드" right="15" top="15" width="110" height="30" onclick="fn_exportExcel"/>
+            </Layout>
+          </Layouts>
+        </Div>
+
+        <!-- 민원 목록 그리드 (대용량 페이징 바인딩) -->
+        <Grid id="grd_complaints" left="20" top="145" width="1050" bottom="60" binddataset="ds_complaints" autofittype="col" oncellclick="grd_complaints_oncellclick">
+          <Formats>
+            <Format id="default">
+              <Columns>
+                <Column size="45" band="left"/>
+                <Column size="140"/>
+                <Column size="110"/>
+                <Column size="280"/>
+                <Column size="85"/>
+                <Column size="95"/>
+                <Column size="130"/>
+                <Column size="95"/>
+              </Columns>
+              <Rows>
+                <Row size="36" band="head"/>
+                <Row size="32"/>
+              </Rows>
+              <Band id="head">
+                <Cell text="No"/>
+                <Cell col="1" text="민원접수번호"/>
+                <Cell col="2" text="유형"/>
+                <Cell col="3" text="민원 제목"/>
+                <Cell col="4" text="자치구"/>
+                <Cell col="5" text="민원인"/>
+                <Cell col="6" text="접수일시"/>
+                <Cell col="7" text="상태"/>
+              </Band>
+              <Band id="body">
+                <Cell expr="currow + 1" textAlign="center"/>
+                <Cell col="1" text="bind:COMPLAINT_ID" textAlign="center"/>
+                <Cell col="2" text="bind:CATEGORY" textAlign="center"/>
+                <Cell col="3" text="bind:TITLE" textAlign="left"/>
+                <Cell col="4" text="bind:DISTRICT" textAlign="center"/>
+                <Cell col="5" text="bind:PETITIONER_NAME" textAlign="center"/>
+                <Cell col="6" text="bind:REG_DATE" textAlign="center"/>
+                <Cell col="7" text="bind:STATUS" textAlign="center"/>
+              </Band>
+            </Format>
+          </Formats>
+        </Grid>
+
+        <!-- 하단 페이징 컴포넌트 -->
+        <Div id="div_paging" left="20" height="40" width="1050" bottom="15">
+          <Layouts>
+            <Layout>
+              <Button id="btn_first" text="&lt;&lt;" left="380" top="5" width="30" height="30" onclick="fn_pageChange"/>
+              <Button id="btn_prev" text="&lt;" left="415" top="5" width="30" height="30" onclick="fn_pageChange"/>
+              <Static id="st_pageInfo" text="1 / 50 페이지 (총 2,500건)" left="455" top="5" width="160" height="30" textAlign="center"/>
+              <Button id="btn_next" text="&gt;" left="625" top="5" width="30" height="30" onclick="fn_pageChange"/>
+              <Button id="btn_last" text="&gt;&gt;" left="660" top="5" width="30" height="30" onclick="fn_pageChange"/>
+            </Layout>
+          </Layouts>
+        </Div>
+
+        <!-- 우측 상세 및 처리 등록 폼 (Detail Form) -->
+        <Div id="div_detail" top="145" right="20" left="1090" bottom="15" cssclass="div_WF_detail">
+          <Layouts>
+            <Layout>
+              <Static id="st_dtl_title" text="민원 상세 정보 및 조치 등록" left="15" top="15" width="250" height="25" cssclass="sta_WF_subTitle"/>
+              
+              <Static id="lbl_id" text="접수번호" left="15" top="50" width="80" height="28"/>
+              <Edit id="edt_id" left="100" top="50" right="15" height="28" readonly="true"/>
+
+              <Static id="lbl_title" text="민원제목" left="15" top="85" width="80" height="28"/>
+              <Edit id="edt_title" left="100" top="85" right="15" height="28" readonly="true"/>
+
+              <Static id="lbl_addr" text="발생위치" left="15" top="120" width="80" height="28"/>
+              <Edit id="edt_addr" left="100" top="120" right="15" height="28" readonly="true"/>
+
+              <Static id="lbl_content" text="신고내용" left="15" top="155" width="80" height="28"/>
+              <TextArea id="txt_content" left="100" top="155" right="15" height="120" readonly="true"/>
+
+              <Static id="lbl_status" text="처리상태" left="15" top="285" width="80" height="28"/>
+              <Combo id="cmb_dtl_status" left="100" top="285" width="140" height="28" innerdataset="ds_statusList" codecolumn="CODE" datacolumn="NAME"/>
+
+              <Static id="lbl_handler" text="담당자" left="260" top="285" width="60" height="28"/>
+              <Edit id="edt_handler" left="325" top="285" right="15" height="28"/>
+
+              <Static id="lbl_resolve" text="조치답변" left="15" top="325" width="80" height="28"/>
+              <TextArea id="txt_resolve" left="100" top="325" right="15" height="130" placeholder="시민 민원 처리결과 답변을 입력하세요."/>
+
+              <Button id="btn_save" text="조치 결과 저장" left="100" top="470" width="140" height="36" cssclass="btn_WF_primary" onclick="fn_saveComplaint"/>
+              <Button id="btn_assign" text="부서 이첩" left="250" top="470" width="110" height="36" onclick="fn_assignDept"/>
+            </Layout>
+          </Layouts>
+        </Div>
+      </Layout>
+    </Layouts>
+
+    <!-- 데이터셋 정의 (넥사크로 핵심 오브젝트) -->
+    <Objects>
+      <Dataset id="ds_complaints">
+        <ColumnInfo>
+          <Column id="COMPLAINT_ID" type="STRING" size="30"/>
+          <Column id="TITLE" type="STRING" size="200"/>
+          <Column id="CATEGORY" type="STRING" size="50"/>
+          <Column id="CONTENT" type="STRING" size="3000"/>
+          <Column id="PETITIONER_NAME" type="STRING" size="50"/>
+          <Column id="PETITIONER_TEL" type="STRING" size="20"/>
+          <Column id="OCCUR_ADDRESS" type="STRING" size="250"/>
+          <Column id="DISTRICT" type="STRING" size="50"/>
+          <Column id="STATUS" type="STRING" size="20"/>
+          <Column id="REG_DATE" type="STRING" size="30"/>
+          <Column id="HANDLER_NAME" type="STRING" size="50"/>
+          <Column id="RESOLVE_COMMENT" type="STRING" size="2000"/>
+        </ColumnInfo>
+      </Dataset>
+      <Dataset id="ds_districts">
+        <ColumnInfo>
+          <Column id="CODE" type="STRING" size="20"/>
+          <Column id="NAME" type="STRING" size="50"/>
+        </ColumnInfo>
+        <Rows>
+          <Row><Col id="CODE">ALL</Col><Col id="NAME">전체 자치구</Col></Row>
+          <Row><Col id="CODE">강남구</Col><Col id="NAME">강남구</Col></Row>
+          <Row><Col id="CODE">서초구</Col><Col id="NAME">서초구</Col></Row>
+          <Row><Col id="CODE">송파구</Col><Col id="NAME">송파구</Col></Row>
+          <Row><Col id="CODE">마포구</Col><Col id="NAME">마포구</Col></Row>
+          <Row><Col id="CODE">영등포구</Col><Col id="NAME">영등포구</Col></Row>
+        </Rows>
+      </Dataset>
+      <Dataset id="ds_statusList">
+        <ColumnInfo>
+          <Column id="CODE" type="STRING" size="20"/>
+          <Column id="NAME" type="STRING" size="50"/>
+        </ColumnInfo>
+        <Rows>
+          <Row><Col id="CODE">ALL</Col><Col id="NAME">전체 상태</Col></Row>
+          <Row><Col id="CODE">RECEIVED</Col><Col id="NAME">접수</Col></Row>
+          <Row><Col id="CODE">ASSIGNED</Col><Col id="NAME">배정완료</Col></Row>
+          <Row><Col id="CODE">IN_PROGRESS</Col><Col id="NAME">처리중</Col></Row>
+          <Row><Col id="CODE">RESOLVED</Col><Col id="NAME">해결완료</Col></Row>
+          <Row><Col id="CODE">REJECTED</Col><Col id="NAME">반려</Col></Row>
+        </Rows>
+      </Dataset>
+      <Dataset id="ds_search">
+        <ColumnInfo>
+          <Column id="district" type="STRING" size="50"/>
+          <Column id="status" type="STRING" size="20"/>
+          <Column id="keyword" type="STRING" size="100"/>
+          <Column id="page" type="INT" size="5"/>
+          <Column id="pageSize" type="INT" size="5"/>
+        </ColumnInfo>
+        <Rows>
+          <Row>
+            <Col id="district">ALL</Col>
+            <Col id="status">ALL</Col>
+            <Col id="keyword"></Col>
+            <Col id="page">1</Col>
+            <Col id="pageSize">20</Col>
+          </Row>
+        </Rows>
+      </Dataset>
+    </Objects>
+
+    <!-- 컴포넌트와 데이터셋 바인딩 -->
+    <Bind>
+      <BindItem id="item0" compid="div_detail.form.edt_id" propid="value" datasetid="ds_complaints" columnid="COMPLAINT_ID"/>
+      <BindItem id="item1" compid="div_detail.form.edt_title" propid="value" datasetid="ds_complaints" columnid="TITLE"/>
+      <BindItem id="item2" compid="div_detail.form.edt_addr" propid="value" datasetid="ds_complaints" columnid="OCCUR_ADDRESS"/>
+      <BindItem id="item3" compid="div_detail.form.txt_content" propid="value" datasetid="ds_complaints" columnid="CONTENT"/>
+      <BindItem id="item4" compid="div_detail.form.cmb_dtl_status" propid="value" datasetid="ds_complaints" columnid="STATUS"/>
+      <BindItem id="item5" compid="div_detail.form.edt_handler" propid="value" datasetid="ds_complaints" columnid="HANDLER_NAME"/>
+      <BindItem id="item6" compid="div_detail.form.txt_resolve" propid="value" datasetid="ds_complaints" columnid="RESOLVE_COMMENT"/>
+    </Bind>
+
+    <!-- 넥사크로 비즈니스 스크립트 -->
+    <Script type="xscript5.1"><![CDATA[
+// 화면 로드 이벤트
+this.CivilComplaint_onload = function(obj, e) {
+    this.div_search.form.cmb_dist.set_index(0);
+    this.div_search.form.cmb_status.set_index(0);
+    this.fn_search();
+};
+
+// 전자정부프레임워크(eGovFrame) 백엔드와 트랜잭션 통신
+this.fn_search = function() {
+    var sSvcID        = "selectComplaintList";
+    var sURL          = "svc_backend::complaints";
+    var sInDatasets   = "ds_search=ds_search";
+    var sOutDatasets  = "ds_complaints=ds_complaints";
+    var sArgument     = "";
+    var sCallbackFunc = "fn_callback";
+
+    trace("[NEXACRO] 민원 목록 트랜잭션 요청 전송...");
+    this.transaction(sSvcID, sURL, sInDatasets, sOutDatasets, sArgument, sCallbackFunc);
+};
+
+// 트랜잭션 콜백
+this.fn_callback = function(svcId, errCode, errMsg) {
+    if (errCode < 0) {
+        this.alert("서버 통신 실패: " + errMsg);
+        return;
+    }
+    trace("[NEXACRO] 트랜잭션 완료: " + svcId + " (" + this.ds_complaints.rowcount + "건)");
+};
+
+// 조치 저장
+this.fn_saveComplaint = function(obj, e) {
+    if (this.ds_complaints.rowposition < 0) {
+        this.alert("저장할 민원 건을 선택해주세요.");
+        return;
+    }
+    var sSvcID        = "saveComplaint";
+    var sURL          = "svc_backend::complaint/save";
+    var sInDatasets   = "ds_complaints=ds_complaints:U"; // 변경된 행만 전송 (:U 플래그)
+    var sOutDatasets  = "";
+    var sCallbackFunc = "fn_callback";
+
+    this.transaction(sSvcID, sURL, sInDatasets, sOutDatasets, "", sCallbackFunc);
+    this.alert("민원 조치 내역이 성공적으로 저장되었습니다.");
+};
+
+// 엑셀 내보내기
+this.fn_exportExcel = function(obj, e) {
+    this.alert("넥사크로 Grid ExcelExport가 실행됩니다.");
+};
+]]></Script>
+  </Form>
+</FXML>

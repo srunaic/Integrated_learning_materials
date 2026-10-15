@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>스마트시티 공공시설 & 시민 민원 통합관제 시스템</title>
+  <!-- Google Fonts & Chart.js CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="header">
+    <div class="logo-area">
+      <div class="logo-icon">🏛️</div>
+      <div class="logo-title">
+        <h1>스마트시티 공공시설 &amp; 시민 민원 통합관제 포털</h1>
+        <p>eGovFrame 4.x &bull; Nexacro UI/UX &bull; Oracle Enterprise DB</p>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-target="tab-dashboard">
+        <span>📊 종합 관제 대시보드</span>
+      </button>
+      <button class="tab-btn" data-target="tab-complaints">
+        <span>📋 넥사크로 시민 민원 관리</span>
+      </button>
+      <button class="tab-btn" data-target="tab-facilities">
+        <span>🏢 시설물 자산 &amp; 점검 이력</span>
+      </button>
+      <button class="tab-btn" data-target="tab-sensors">
+        <span>📡 IoT 센서 텔레메트리</span>
+      </button>
+    </nav>
+
+    <!-- Header Right (Clock & Status) -->
+    <div class="header-right">
+      <div class="data-mode-toggle">
+        <span class="status-dot"></span>
+        <span id="modeLabel">온라인 데모 (Mock Engine)</span>
+      </div>
+      <div class="clock-badge" id="liveClock">2026-10-15 00:00:00</div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="container">
+
+    <!-- [TAB 1] 종합 관제 대시보드 -->
+    <section id="tab-dashboard" class="tab-content active">
+      <!-- KPI Stats -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>총 등록 공공시설물</span>
+            <span>🏢</span>
+          </div>
+          <div class="kpi-value">
+            <span id="kpiTotalFac">0</span>
+            <span class="kpi-unit">개소</span>
+          </div>
+          <div class="kpi-footer">
+            <span style="color: var(--color-primary);">● 가로등, CCTV, 쉘터, 급속충전기</span>
+          </div>
+        </div>
+
+        <div class="kpi-card success">
+          <div class="kpi-header">
+            <span>정상 가동 시설물</span>
+            <span>⚡</span>
+          </div>
+          <div class="kpi-value">
+            <span id="kpiNormalFac">0</span>
+            <span class="kpi-unit">개소 (94.2%)</span>
+          </div>
+          <div class="kpi-footer">
+            <span style="color: var(--color-success);">▲ 안정적 가동 상태 유지 중</span>
+          </div>
+        </div>
+
+        <div class="kpi-card warn">
+          <div class="kpi-header">
+            <span>시민 누적 접수 민원</span>
+            <span>📢</span>
+          </div>
+          <div class="kpi-value">
+            <span id="kpiTotalCmp">0</span>
+            <span class="kpi-unit">건</span>
+          </div>
+          <div class="kpi-footer">
+            <span>도로파손, 가로등소등, 시설오작동</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>민원 조치 및 해결완료</span>
+            <span>✅</span>
+          </div>
+          <div class="kpi-value">
+            <span id="kpiResolvedCmp">0</span>
+            <span class="kpi-unit">건</span>
+          </div>
+          <div class="kpi-footer">
+            <span style="color: var(--color-primary);">평균 조치 소요시간: 1.8일</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title">
+              <span>📊 관할 자치구별 스마트 공공시설물 구축 현황</span>
+            </div>
+            <span style="font-size: 12px; color: var(--text-muted);">실시간 연계</span>
+          </div>
+          <div class="chart-body">
+            <canvas id="chartDistrict"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title">
+              <span>🎯 민원 처리 단계별 분포 비율</span>
+            </div>
+          </div>
+          <div class="chart-body">
+            <canvas id="chartStatus"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Urgent Alerts -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">
+            <span>🚨 실시간 긴급 민원 및 현장 조치 알림 (Live Feed)</span>
+          </div>
+        </div>
+        <div id="recentAlertList"></div>
+      </div>
+    </section>
+
+    <!-- [TAB 2] 넥사크로 시민 통합 민원 관리 (Nexacro Grid & Form) -->
+    <section id="tab-complaints" class="tab-content">
+      <div class="nexacro-panel">
+        <!-- Nexacro Search Condition Bar -->
+        <div class="nexacro-search-bar">
+          <div class="search-field">
+            <label for="searchDistrict">관할 자치구:</label>
+            <select id="searchDistrict" class="custom-select">
+              <option value="ALL">전체 자치구</option>
+              <option value="강남구">강남구</option>
+              <option value="서초구">서초구</option>
+              <option value="송파구">송파구</option>
+              <option value="마포구">마포구</option>
+              <option value="영등포구">영등포구</option>
+              <option value="종로구">종로구</option>
+            </select>
+          </div>
+
+          <div class="search-field">
+            <label for="searchStatus">처리 상태:</label>
+            <select id="searchStatus" class="custom-select">
+              <option value="ALL">전체 상태</option>
+              <option value="RECEIVED">접수대기</option>
+              <option value="ASSIGNED">담당배정</option>
+              <option value="IN_PROGRESS">처리중</option>
+              <option value="RESOLVED">해결완료</option>
+              <option value="REJECTED">반려</option>
+            </select>
+          </div>
+
+          <div class="search-field">
+            <label for="searchKeyword">검색어:</label>
+            <input type="text" id="searchKeyword" class="custom-input" placeholder="제목/내용/신고자 검색" style="width: 200px;">
+          </div>
+
+          <button id="btnSearchComplaint" class="btn btn-primary">🔍 조회 (F8)</button>
+          <button id="btnResetSearch" class="btn btn-secondary">🔄 초기화</button>
+          <button id="btnExportExcel" class="btn btn-excel">📥 엑셀(CSV) 다운로드</button>
+        </div>
+
+        <!-- Split View: Nexacro Grid (Left) + Detail Form (Right) -->
+        <div class="split-view">
+          <!-- Grid Area -->
+          <div class="grid-container">
+            <div style="padding: 10px 16px; background: #0e1626; border-bottom: 1px solid var(--nexacro-border); font-size: 12px; color: var(--text-secondary); display: flex; justify-content: space-between;">
+              <span><strong>Nexacro Grid [grd_complaints]</strong> (행을 클릭하면 우측 폼에 즉시 바인딩됩니다)</span>
+              <span>검색 결과: <strong id="complaintCountTotal" style="color: var(--color-primary);">0</strong> 건</span>
+            </div>
+            <div style="flex: 1; overflow-y: auto; max-height: 520px;">
+              <table class="nexacro-grid">
+                <thead>
+                  <tr>
+                    <th style="width: 45px; text-align: center;">No</th>
+                    <th style="width: 140px; text-align: center;">민원접수번호</th>
+                    <th style="width: 100px; text-align: center;">유형</th>
+                    <th>민원 제목</th>
+                    <th style="width: 75px; text-align: center;">자치구</th>
+                    <th style="width: 85px; text-align: center;">민원인</th>
+                    <th style="width: 130px; text-align: center;">접수일시</th>
+                    <th style="width: 80px; text-align: center;">상태</th>
+                  </tr>
+                </thead>
+                <tbody id="complaintGridBody"></tbody>
+              </table>
+            </div>
+
+            <!-- Pagination Bar -->
+            <div class="pagination-bar">
+              <button id="btnPrevPage" class="page-btn">&lt; 이전</button>
+              <span id="pageInfoText" class="page-info">1 / 1 페이지</span>
+              <button id="btnNextPage" class="page-btn">다음 &gt;</button>
+            </div>
+          </div>
+
+          <!-- Detail & Action Form -->
+          <div class="detail-form">
+            <div class="detail-title">
+              <span>📝 민원 상세 정보 및 조치</span>
+              <span style="font-size: 11px; color: #94a3b8; font-weight: normal;">Dataset: ds_complaints:U</span>
+            </div>
+
+            <div class="form-group">
+              <label>민원 접수번호 / 유형</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="dtl_id" readonly style="width: 60%; font-family: monospace;">
+                <input type="text" id="dtl_category" readonly style="width: 40%; color: var(--color-primary);">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>민원인 / 연락처</label>
+              <input type="text" id="dtl_petitioner" readonly>
+            </div>
+
+            <div class="form-group">
+              <label>발생 위치</label>
+              <input type="text" id="dtl_addr" readonly>
+            </div>
+
+            <div class="form-group">
+              <label>민원 제목</label>
+              <input type="text" id="dtl_title" readonly>
+            </div>
+
+            <div class="form-group">
+              <label>신고 내용</label>
+              <textarea id="dtl_content" rows="4" readonly></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>처리 상태 변경</label>
+              <select id="dtl_status" class="custom-select">
+                <option value="RECEIVED">접수대기</option>
+                <option value="ASSIGNED">담당배정</option>
+                <option value="IN_PROGRESS">처리중</option>
+                <option value="RESOLVED">해결완료</option>
+                <option value="REJECTED">반려</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>현장 조치 담당자</label>
+              <input type="text" id="dtl_handler" placeholder="담당자 성명 입력">
+            </div>
+
+            <div class="form-group">
+              <label>시민 답변 및 조치 결과</label>
+              <textarea id="dtl_resolve" rows="3" placeholder="현장 조치 내역 및 민원인 회신 답변을 입력하세요."></textarea>
+            </div>
+
+            <button id="btnSaveComplaint" class="btn btn-primary" style="margin-top: 6px; justify-content: center;">
+              💾 조치 결과 저장 (Transaction)
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- [TAB 3] 공공 시설물 마스터 & 점검 이력 (Master-Detail) -->
+    <section id="tab-facilities" class="tab-content">
+      <div class="nexacro-panel">
+        <div style="padding: 16px 20px; background: #131c2e; border-bottom: 1px solid var(--nexacro-border);">
+          <h2 style="font-size: 16px; font-weight: 700;">🏢 공공 시설물 자산 마스터</h2>
+          <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">목록에서 시설물을 클릭하면 하단에 유지보수 점검 이력이 실시간 연동됩니다.</p>
+        </div>
+
+        <div style="overflow-x: auto; max-height: 380px;">
+          <table class="nexacro-grid">
+            <thead>
+              <tr>
+                <th style="width: 120px; text-align: center;">시설물 코드</th>
+                <th>시설물 명칭</th>
+                <th style="width: 130px; text-align: center;">시설유형</th>
+                <th style="width: 90px; text-align: center;">자치구</th>
+                <th>설치 위치 상세</th>
+                <th style="width: 95px; text-align: center;">가동상태</th>
+                <th style="width: 110px; text-align: center;">설치일자</th>
+                <th style="width: 120px; text-align: center;">관리부서</th>
+              </tr>
+            </thead>
+            <tbody id="facilityGridBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Detail Grid: Inspection History -->
+        <div style="padding: 16px 20px; background: #0d1525; border-top: 1px solid var(--nexacro-border); border-bottom: 1px solid var(--nexacro-border);">
+          <h3 id="selectedFacLabel" style="font-size: 14px; font-weight: 700; color: var(--color-primary);">
+            [시설물 점검 및 수리 이력]
+          </h3>
+        </div>
+
+        <div style="overflow-x: auto; max-height: 250px;">
+          <table class="nexacro-grid">
+            <thead>
+              <tr>
+                <th style="width: 130px; text-align: center;">점검 번호</th>
+                <th style="width: 100px; text-align: center;">점검일자</th>
+                <th style="width: 90px; text-align: center;">구분</th>
+                <th style="width: 80px; text-align: center;">결과</th>
+                <th style="width: 90px; text-align: center;">점검원</th>
+                <th>조치 및 점검 상세 내역</th>
+                <th style="width: 110px; text-align: right;">수리비용</th>
+                <th style="width: 110px; text-align: center;">차기점검일</th>
+              </tr>
+            </thead>
+            <tbody id="inspGridBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- [TAB 4] IoT 센서 텔레메트리 로그 -->
+    <section id="tab-sensors" class="tab-content">
+      <div class="nexacro-panel">
+        <div style="padding: 16px 20px; background: #131c2e; border-bottom: 1px solid var(--nexacro-border);">
+          <h2 style="font-size: 16px; font-weight: 700;">📡 스마트시티 IoT 센서 실시간 텔레메트리</h2>
+          <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">도심 시설물에 부착된 온습도, 진동, 소비전력, 미세먼지 수치를 모니터링합니다.</p>
+        </div>
+
+        <div style="overflow-x: auto; max-height: 550px;">
+          <table class="nexacro-grid">
+            <thead>
+              <tr>
+                <th style="width: 90px; text-align: center;">로그 No</th>
+                <th style="width: 150px; text-align: center;">시설물 코드</th>
+                <th style="width: 130px; text-align: center;">센서 종류</th>
+                <th style="width: 140px; text-align: right;">계측 수치</th>
+                <th style="width: 100px; text-align: center;">상태</th>
+                <th style="width: 180px; text-align: center;">계측 일시</th>
+              </tr>
+            </thead>
+            <tbody id="sensorLogsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>스마트시티 공공시설 &amp; 시민 민원 통합관제 시스템 &bull; Portfolio Project</p>
+    <p style="margin-top: 4px; color: var(--text-muted);">
+      Tech Stack: eGovFrame 4.x (Spring Boot 3.2, Java 17) &bull; Nexacro UI/UX &bull; Oracle DB &bull; Python Faker &bull; GitHub Actions &amp; Pages
+    </p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
