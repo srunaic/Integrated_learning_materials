@@ -1,12 +1,12 @@
 {
   "totalFacilities": 150,
-  "normalFacilities": 125,
+  "normalFacilities": 121,
   "warningFacilities": 13,
-  "errorFacilities": 12,
+  "errorFacilities": 16,
   "totalComplaints": 2500,
-  "resolvedComplaints": 883,
-  "inProgressComplaints": 616,
-  "receivedComplaints": 856,
+  "resolvedComplaints": 873,
+  "inProgressComplaints": 628,
+  "receivedComplaints": 872,
   "todayAlerts": 12,
   "districts": [
     "강남구",
@@ -20,5 +20,5 @@
     "용산구",
     "강동구"
   ],
-  "updatedAt": "2026-10-15 23:02:45"
+  "updatedAt": "2026-10-15 23:15:21"
 }
