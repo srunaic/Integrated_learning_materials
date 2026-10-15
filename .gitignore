@@ -1,13 +1,11 @@
-# Gradle
-.gradle/
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Protected Proprietary Core Source Assets (Local Only)
+backend/
+db/
+nexacro/
+*.bat
 
 # Raw Source Files
 *.src.js
-db/create_user.sql
 *.log
 *.ctxt
 .mtj.tmp/
@@ -29,7 +27,7 @@ venv/
 ENV/
 env/
 
-# IDE
+# IDE & Config
 .idea/
 *.iml
 .vscode/

@@ -4,8 +4,7 @@ AI - egovoframework - nexacro automation system
 # 스마트시티 공공시설 & 시민 민원 통합관제 시스템
 > **eGovFrame 4.x(전자정부프레임워크) & Nexacro N & Oracle DB & GitHub Actions 자동 배포**
 
-[![Deploy to GitHub Pages](https://github.com/srunaic/Integrated_learning_materials/actions/workflows/deploy.yml/badge.svg)](https://github.com/srunaic/Integrated_learning_materials/actions/workflows/deploy.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-red.svg)](LICENSE)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-brightgreen.svg)](https://spring.io/)
 [![Java](https://img.shields.io/badge/Java-17_LTS-orange.svg)](https://www.oracle.com/java/)
 [![Nexacro](https://img.shields.io/badge/Nexacro-N_UI%2FUX-00d2ff.svg)](http://support.tobesoft.co.kr)
@@ -13,10 +12,12 @@ AI - egovoframework - nexacro automation system
 
 ---
 
+> 🔒 **[보안 및 지적재산권(IP) 보호 공지]**  
+> 본 프로젝트의 전자정부프레임워크 Java 코어 백엔드 및 Oracle DB 스키마, Nexacro Studio 원본 파일은 무단 도용 및 복제 방지를 위해 로컬 보안 환경에서 안전하게 관리되고 있습니다. 시스템의 전체 구동 및 UI/UX 인터랙션은 아래 **온라인 라이브 데모** 링크에서 100% 실시간으로 체험 및 검증하실 수 있습니다.
 
-## 🌐 1. 온라인 라이브 데모 (GitHub Pages)
+## 🌐 1. 온라인 라이브 데모 (Cloudflare Global Edge)
 
-🔗 **https://integrated-learning-materials.victoryka123.workers.dev/**
+🔗 **[https://integrated-learning-materials.victoryka123.workers.dev/](https://integrated-learning-materials.victoryka123.workers.dev/)**
 ---
 <img width="1593" height="928" alt="image" src="https://github.com/user-attachments/assets/b2a2d0c8-8c9f-47ea-8ff9-b4f975a21c1d" />
 
