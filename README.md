@@ -11,9 +11,8 @@ AI - egovoframework - nexacro automation system
 [![Oracle](https://img.shields.io/badge/Oracle-Database_XE-red.svg)](https://www.oracle.com/database/)
 
 ---
-
 > 🔒 **[보안 및 지적재산권(IP) 보호 공지]**  
-> 본 프로젝트의 전자정부프레임워크 Java 코어 백엔드 및 Oracle DB 스키마, Nexacro Studio 원본 파일은 무단 도용 및 복제 방지를 위해 로컬 보안 환경에서 안전하게 관리되고 있습니다. 시스템의 전체 구동 및 UI/UX 인터랙션은 아래 **온라인 라이브 데모** 링크에서 100% 실시간으로 체험 및 검증하실 수 있습니다.
+> 본 프로젝트의 전자정부프레임워크 Java 코어 백엔드 및 Oracle DB 스키마, Nexacro Studio 원본 파일은 무단 도용 및 복제 방지를 위해 로컬 서버 보안 환경에서 안전하게 관리되고 있습니다.
 
 ## 🌐 1. 온라인 라이브 데모 (Cloudflare Global Edge)
 
