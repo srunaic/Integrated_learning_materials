@@ -88,7 +88,7 @@ class SmartCityApiHandler(http.server.BaseHTTPRequestHandler):
             if status != 'ALL':
                 filtered = [c for c in filtered if c.get('STATUS') == status]
             if keyword:
-                filtered = [c for c in filtered if keyword in c.get('TITLE', '').lower() or keyword in c.get('CONTENT', '').lower()]
+                filtered = [c for c in filtered if keyword in c.get('COMPLAINT_ID', '').lower() or keyword in c.get('TITLE', '').lower() or keyword in c.get('CONTENT', '').lower() or keyword in c.get('PETITIONER_NAME', '').lower()]
 
             total_count = len(filtered)
             start = (page - 1) * page_size

@@ -182,7 +182,7 @@
 
           <div class="search-field">
             <label for="searchKeyword">검색어:</label>
-            <input type="text" id="searchKeyword" class="custom-input" placeholder="제목/내용/신고자 검색" style="width: 200px;">
+            <input type="text" id="searchKeyword" class="custom-input" placeholder="접수번호/제목/내용/신고자 검색" style="width: 230px;">
           </div>
 
           <button id="btnSearchComplaint" class="btn btn-primary">🔍 조회 (F8)</button>
@@ -378,5 +378,29 @@
   </footer>
 
   <script src="js/app.js"></script>
+  <!-- Code Protection & Anti-Theft Shield -->
+  <script>
+    // 1. 마우스 우클릭 금지 (컨텍스트 메뉴 차단)
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    });
+
+    // 2. 개발자 도구 단축키 및 소스보기 차단 (F12, Ctrl+Shift+I, Ctrl+U, Ctrl+S)
+    document.addEventListener('keydown', function(e) {
+      if (
+        e.keyCode === 123 || // F12
+        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || // Ctrl+Shift+I, J, C
+        (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83)) // Ctrl+U, Ctrl+S
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    });
+
+    // 3. 텍스트 드래그 및 복사 방지
+    document.addEventListener('selectstart', function(e) { e.preventDefault(); });
+  </script>
 </body>
 </html>

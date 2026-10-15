@@ -33,7 +33,7 @@
                 AND STATUS = #{status}
             </if>
             <if test="keyword != null and keyword != ''">
-                AND (TITLE LIKE '%' || #{keyword} || '%' OR CONTENT LIKE '%' || #{keyword} || '%')
+                AND (COMPLAINT_ID LIKE '%' || #{keyword} || '%' OR TITLE LIKE '%' || #{keyword} || '%' OR CONTENT LIKE '%' || #{keyword} || '%' OR PETITIONER_NAME LIKE '%' || #{keyword} || '%')
             </if>
         </where>
         ORDER BY REG_DATE DESC
@@ -53,7 +53,7 @@
                 AND STATUS = #{status}
             </if>
             <if test="keyword != null and keyword != ''">
-                AND (TITLE LIKE '%' || #{keyword} || '%' OR CONTENT LIKE '%' || #{keyword} || '%')
+                AND (COMPLAINT_ID LIKE '%' || #{keyword} || '%' OR TITLE LIKE '%' || #{keyword} || '%' OR CONTENT LIKE '%' || #{keyword} || '%' OR PETITIONER_NAME LIKE '%' || #{keyword} || '%')
             </if>
         </where>
     </select>

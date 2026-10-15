@@ -1,16 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <FDL version="2.1">
   <Form id="MainDashboard" width="1680" height="960" titletext="스마트시티 통합관제 종합상황판" onload="MainDashboard_onload" background="#0a0f1d">
     <Layouts>
       <Layout width="1680" height="960">
         <!-- 1. 최상단 관제센터 헤더 바 -->
-        <Div id="div_header" left="20" top="15" right="20" height="65" background="#111827" border="1px solid #1e293b" borderRadius="8px">
+        <Div id="div_header" left="20" top="15" right="20" height="65" background="#111827" border="1px solid #1e293b" borderRadius="8px" text="">
           <Layouts>
             <Layout>
-              <Static id="st_icon" text="🏛️" left="15" top="12" width="40" height="40" font="24px/normal 'Segoe UI Emoji'" textAlign="center"/>
+              <Static id="st_icon" text="🏛️" left="15" top="12" width="40" height="40" font="24px/normal 'Segoe UI Emoji'" textAlign="center" onclick="div_header_st_icon_onclick"/>
               <Static id="st_main_title" text="스마트시티 공공시설 &amp; 시민 민원 통합관제 종합상황판" left="65" top="12" width="600" height="24" font="bold 18px 'Pretendard', 'Malgun Gothic'" color="#ffffff"/>
               <Static id="st_sub_title" text="SmartCity Integrated Public Facility &amp; Civil Complaint Command Center" left="65" top="36" width="600" height="18" font="11px 'Pretendard'" color="#64748b"/>
-              
               <!-- 실시간 상태 인디케이터 -->
               <Static id="st_dot" text="●" left="1320" top="22" width="20" height="20" color="#10b981" font="bold 16px 'Arial'"/>
               <Static id="st_network" text="통합관제망 정상 가동 중" left="1340" top="23" width="160" height="20" font="12px 'Pretendard'" color="#94a3b8"/>
@@ -18,7 +17,6 @@
             </Layout>
           </Layouts>
         </Div>
-
         <!-- 2. 상단 핵심 4대 KPI 요약 카드 (글래스모피즘 & 네온 테두리) -->
         <!-- KPI 1: 총 등록 시설물 -->
         <Div id="kpi_fac" left="20" top="95" width="395" height="110" background="#131c2e" border="1px solid #00d2ff" borderRadius="10px">
@@ -32,9 +30,8 @@
             </Layout>
           </Layouts>
         </Div>
-
         <!-- KPI 2: 정상 가동률 -->
-        <Div id="kpi_rate" left="435" top="95" width="395" height="110" background="#131c2e" border="1px solid #10b981" borderRadius="10px">
+        <Div id="kpi_rate" left="435" top="96" width="395" height="110" background="#131c2e" border="1px solid #10b981" borderRadius="10px">
           <Layouts>
             <Layout>
               <Static id="st_k2_lbl" text="시설물 실시간 정상 가동률" left="20" top="15" width="200" height="20" font="13px 'Pretendard'" color="#94a3b8"/>
@@ -45,7 +42,6 @@
             </Layout>
           </Layouts>
         </Div>
-
         <!-- KPI 3: 누적 민원 -->
         <Div id="kpi_cmp" left="850" top="95" width="395" height="110" background="#131c2e" border="1px solid #3b82f6" borderRadius="10px">
           <Layouts>
@@ -58,7 +54,6 @@
             </Layout>
           </Layouts>
         </Div>
-
         <!-- KPI 4: 긴급 점검 필요 -->
         <Div id="kpi_alert" left="1265" top="95" right="20" height="110" background="#131c2e" border="1px solid #ef4444" borderRadius="10px">
           <Layouts>
@@ -71,7 +66,6 @@
             </Layout>
           </Layouts>
         </Div>
-
         <!-- 3. 좌측 영역: 구역별 시설물 및 운영 현황 그리드 -->
         <Static id="st_title_left" text="🏢 관할 자치구별 공공시설물 가동 상태" left="20" top="220" width="350" height="25" font="bold 15px 'Pretendard'" color="#00d2ff"/>
         <Grid id="grd_fac_status" left="20" top="250" width="810" height="380" binddataset="ds_facilities" autofittype="col" background="#111827" border="1px solid #1e293b">
@@ -108,7 +102,6 @@
             </Format>
           </Formats>
         </Grid>
-
         <!-- 4. 우측 영역: 실시간 시민 긴급 민원 관제 그리드 -->
         <Static id="st_title_right" text="📢 실시간 시민 접수 민원 관제 (최근 접수순)" left="850" top="220" width="350" height="25" font="bold 15px 'Pretendard'" color="#00d2ff"/>
         <Grid id="grd_complaints" left="850" top="250" right="20" height="380" binddataset="ds_complaints" autofittype="col" background="#111827" border="1px solid #1e293b">
@@ -145,10 +138,9 @@
             </Format>
           </Formats>
         </Grid>
-
         <!-- 5. 하단 영역: 실시간 스마트시티 IoT 센서 텔레메트리 (Time-Series) -->
         <Static id="st_title_bottom" text="📡 도심 IoT 환경 및 시설물 센서 실시간 텔레메트리" left="20" top="645" width="450" height="25" font="bold 15px 'Pretendard'" color="#00d2ff"/>
-        <Grid id="grd_sensor" left="20" top="675" right="20" bottom="20" binddataset="ds_sensors" autofittype="col" background="#111827" border="1px solid #1e293b">
+        <Grid id="grd_sensor" left="20" top="700" right="20" bottom="-5" binddataset="ds_sensors" autofittype="col" background="#111827" border="1px solid #1e293b">
           <Formats>
             <Format id="default">
               <Columns>
@@ -184,7 +176,6 @@
         </Grid>
       </Layout>
     </Layouts>
-
     <!-- 데이터셋 정의 -->
     <Objects>
       <Dataset id="ds_facilities">
@@ -219,7 +210,6 @@
         </ColumnInfo>
       </Dataset>
     </Objects>
-
     <!-- 스크립트 -->
     <Script type="xscript5.1"><![CDATA[
 this.MainDashboard_onload = function(obj, e) {
@@ -237,6 +227,11 @@ this.fn_callback = function(svcId, errCode, errMsg) {
     if (errCode < 0) {
         trace("[WARN] 백엔드 오프라인 - 데모 모드 작동: " + errMsg);
     }
+};
+
+this.div_header_st_icon_onclick = function(obj:nexacro.Static,e:nexacro.ClickEventInfo)
+{
+	
 };
 ]]></Script>
   </Form>
