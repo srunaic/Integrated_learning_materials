@@ -10,6 +10,7 @@
 
 ---
 
+
 ## 🌐 1. 온라인 라이브 데모 (GitHub Pages)
 
 GitHub Actions를 통해 본 저장소의 정적 웹 포털이 GitHub Pages로 자동 배포됩니다.  
@@ -18,6 +19,10 @@ GitHub Actions를 통해 본 저장소의 정적 웹 포털이 GitHub Pages로 �
 🔗 **https://integrated-learning-materials.victoryka123.workers.dev/**
 
 ---
+
+<img width="1593" height="928" alt="image" src="https://github.com/user-attachments/assets/b2a2d0c8-8c9f-47ea-8ff9-b4f975a21c1d" />
+
+
 
 ## 🏗️ 2. 시스템 아키텍처 (System Architecture)
 
