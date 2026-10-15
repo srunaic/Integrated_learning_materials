@@ -15,8 +15,8 @@ spring:
     # 로컬 Oracle XE 접속 정보 (설치 환경에 맞게 SID 또는 ServiceName 지정)
     driver-class-name: oracle.jdbc.OracleDriver
     url: jdbc:oracle:thin:@localhost:1521:xe
-    username: SMARTCITY_USER
-    password: SmartCity2024!
+    username: srunaic
+    password: alspfkf123
     
     # HikariCP 커넥션 풀 최적화 (PC 리소스 절약)
     hikari:

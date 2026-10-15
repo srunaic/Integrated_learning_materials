@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<TypeDefinition version="2.2">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TypeDefinition version="3.0">
   <Modules>
     <Module url="CompBase.json"/>
     <Module url="ComComp.json"/>
@@ -34,6 +34,7 @@
     <Service prefixid="imagerc" type="resource" url="./_resource_/_images_/"/>
     <Service prefixid="font" type="resource" url="./_resource_/_font_/" version="0" communicationversion="0"/>
     <Service prefixid="form" type="form" url="./project/form/"/>
+    <Service prefixid="xcssrc" type="resource" url="./_resource_/_xcss_/"/>
   </Services>
   <Protocols/>
   <Update>

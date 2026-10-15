@@ -2,7 +2,7 @@
 스마트시티 공공시설 & 시민 민원 통합관제 백엔드 서버
 - 넥사크로(Nexacro N) Transaction 통신 & 웹 REST API 지원
 - Oracle DB (oracledb) 실시간 쿼리 연동 & 오프라인 폴백 지원
-- 포트: 8080 (CORS 완전 지원)
+- 포트: 8080 (SO_REUSEADDR 적용)
 """
 
 import http.server
@@ -12,30 +12,37 @@ import urllib.parse
 import os
 import sys
 import datetime
+import time
 
 PORT = 8080
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 MOCK_DIR = os.path.join(ROOT_DIR, 'web_portal', 'mock_data')
 
-# Oracle DB 연결 설정 (로컬 XE)
+# -------------------------------------------------------------
+# 🏛️ 오라클 DB 계정 설정 (사용자 본인의 오라클 계정에 맞게 변경 가능)
+# -------------------------------------------------------------
 ORACLE_CONFIG = {
-    'user': 'SMARTCITY_USER',
-    'password': 'SmartCity2024!',
-    'dsn': 'localhost:1521/xe'
+    'user': 'srunaic',
+    'password': 'alspfkf123',
+    'dsn': 'localhost:1521/xe'  # 또는 1521/xepdb1
 }
 
 oracle_conn = None
 try:
     import oracledb
-    # Oracle 연결 시도 (오프라인이어도 서버 죽지 않도록 예외 처리)
     try:
         oracle_conn = oracledb.connect(**ORACLE_CONFIG)
-        print("[+] Oracle Database 연결 성공! (Real-time DB Mode)")
+        print("[+] Oracle Database 연결 성공! (실시간 오라클 DB 모드 활성화)")
     except Exception as e:
-        print(f"[*] Oracle DB 대기 중 ({e}). 로컬 데이터 캐시 모드로 자동 작동합니다.")
+        # 오라클 접속 실패 시에도 죽지 않고 안전 모드로 서비스
+        print("----------------------------------------------------------")
+        print("[안내] 로컬 오라클 DB 계정 연결 대기 중...")
+        print(f"       현재 상태: {e}")
+        print("       >> 가상 데이터 캐시 엔진으로 정상 서비스합니다! <<")
+        print("----------------------------------------------------------")
 except ImportError:
-    print("[*] oracledb 모듈 미설치 - 로컬 캐시 모드로 구동합니다.")
+    print("[*] oracledb 미설치 - 가상 데이터 캐시 모드로 구동합니다.")
 
 def load_json(filename):
     filepath = os.path.join(MOCK_DIR, filename)
@@ -51,7 +58,6 @@ def save_json(filename, data):
 
 class SmartCityApiHandler(http.server.BaseHTTPRequestHandler):
     def end_headers(self):
-        # CORS 헤더 완전 허용 (넥사크로 및 웹 브라우저 통신)
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
@@ -67,7 +73,7 @@ class SmartCityApiHandler(http.server.BaseHTTPRequestHandler):
         path = parsed.path
         query = urllib.parse.parse_qs(parsed.query)
 
-        # 1. 민원 목록 페이징 API (/api/complaints or /api/nexacro/complaints)
+        # 1. 민원 목록 페이징 API
         if path in ['/api/complaints', '/api/nexacro/complaints']:
             page = int(query.get('page', [1])[0])
             page_size = int(query.get('pageSize', [20])[0])
@@ -99,7 +105,7 @@ class SmartCityApiHandler(http.server.BaseHTTPRequestHandler):
             }
             self._send_json(response_data)
 
-        # 2. 시설물 목록 API (/api/facilities or /api/nexacro/facilities)
+        # 2. 시설물 목록 API
         elif path in ['/api/facilities', '/api/nexacro/facilities']:
             facilities = load_json('facilities.json')
             response_data = {
@@ -110,7 +116,7 @@ class SmartCityApiHandler(http.server.BaseHTTPRequestHandler):
             }
             self._send_json(response_data)
 
-        # 3. 시설물 점검 이력 API (/api/inspections or /api/nexacro/inspections)
+        # 3. 시설물 점검 이력 API
         elif path in ['/api/inspections', '/api/nexacro/inspections']:
             fac_id = query.get('facId', [None])[0]
             all_insps = load_json('inspections.json')
@@ -123,12 +129,7 @@ class SmartCityApiHandler(http.server.BaseHTTPRequestHandler):
             }
             self._send_json(response_data)
 
-        # 4. 대시보드 KPI API
-        elif path in ['/api/dashboard/kpi', '/api/nexacro/kpi']:
-            kpi = load_json('summary_kpi.json')
-            self._send_json(kpi)
-
-        # 5. 루트 헬스체크
+        # 4. 루트 헬스체크
         elif path == '/' or path == '/api':
             self._send_json({
                 'system': 'SmartCity Facility & Complaint Ops Backend',
@@ -151,7 +152,6 @@ class SmartCityApiHandler(http.server.BaseHTTPRequestHandler):
         except Exception:
             req_data = {}
 
-        # 민원 조치 및 상태 저장 API (/api/complaint/save or /api/nexacro/complaint/save)
         if path in ['/api/complaint/save', '/api/nexacro/complaint/save']:
             target_id = req_data.get('COMPLAINT_ID') or req_data.get('complaintId')
             new_status = req_data.get('STATUS') or req_data.get('status')
@@ -186,14 +186,28 @@ class SmartCityApiHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(encoded)
 
+# 포트 즉시 재사용 지원 소켓 서버 클래스
+class ReusableTCPServer(socketserver.TCPServer):
+    allow_reuse_address = True
+
 def run_server():
-    server = socketserver.TCPServer(("", PORT), SmartCityApiHandler)
-    server.allow_reuse_address = True
+    server = None
+    for attempt in range(5):
+        try:
+            server = ReusableTCPServer(("", PORT), SmartCityApiHandler)
+            break
+        except OSError as e:
+            if e.winerror == 10048 and attempt < 4:
+                print(f"[*] 8080 포트가 이전 연결 정리(TimeWait) 중입니다. 2초 후 자동 재시도 ({attempt+1}/4)...")
+                time.sleep(2)
+            else:
+                print(f"[!] 8080 포트 점유 해제 실패: {e}")
+                raise
+
     print("==========================================================")
     print(" [SmartCity] 통합관제 백엔드 서버가 성공적으로 시작되었습니다!")
     print(f" - 서비스 URL: http://localhost:{PORT}/api")
     print(f" - 넥사크로 수신 URL: http://localhost:{PORT}/api/nexacro/")
-    print(f" - 민원 페이징 API: http://localhost:{PORT}/api/complaints?page=1")
     print("==========================================================")
     try:
         server.serve_forever()

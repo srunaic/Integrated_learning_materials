@@ -1,0 +1,45 @@
+ALTER SESSION SET "_ORACLE_SCRIPT"=true;
+
+-- 기존 사용자가 있다면 삭제 후 재생성 (또는 없으면 에러 무시)
+DECLARE
+    v_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_count FROM dba_users WHERE username = 'SRUNAIC';
+    IF v_count > 0 THEN
+        EXECUTE IMMEDIATE 'DROP USER srunaic CASCADE';
+    END IF;
+END;
+/
+
+-- 사용자 생성 및 비밀번호 설정
+CREATE USER srunaic IDENTIFIED BY "alspfkf123"
+DEFAULT TABLESPACE USERS
+TEMPORARY TABLESPACE TEMP
+QUOTA UNLIMITED ON USERS;
+
+-- 권한 부여
+GRANT CONNECT, RESOURCE, DBA TO srunaic;
+GRANT CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE SEQUENCE TO srunaic;
+
+-- XEPDB1 (플러그형 데이터베이스) 확인 및 동일 계정 생성
+DECLARE
+    v_open_mode VARCHAR2(20);
+BEGIN
+    SELECT open_mode INTO v_open_mode FROM v$pdbs WHERE name = 'XEPDB1';
+    IF v_open_mode = 'READ WRITE' THEN
+        EXECUTE IMMEDIATE 'ALTER SESSION SET CONTAINER = XEPDB1';
+        BEGIN
+            EXECUTE IMMEDIATE 'CREATE USER srunaic IDENTIFIED BY "alspfkf123" DEFAULT TABLESPACE USERS QUOTA UNLIMITED ON USERS';
+            EXECUTE IMMEDIATE 'GRANT CONNECT, RESOURCE, DBA TO srunaic';
+        EXCEPTION
+            WHEN OTHERS THEN
+                NULL;
+        END;
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        NULL;
+END;
+/
+
+EXIT;
