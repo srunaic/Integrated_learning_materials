@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ENV version="2.1">
-  <Environment themeid="theme::Empty">
+  <Environment themeid="theme::Empty" datatyperule="2.0" usehttpkeepalive="true">
     <ScreenDefinition>
-      <Screen id="Desktop_screen" type="desktop"/>
+      <Screen id="Desktop_screen" type="desktop" themeid="theme::Empty"/>
     </ScreenDefinition>
     <Variables/>
     <Cookies/>
     <httpheader/>
-    <Services>
-      <Service id="svc_backend" type="JSP" url="http://localhost:8080/api/nexacro/"/>
-    </Services>
   </Environment>
 </ENV>
